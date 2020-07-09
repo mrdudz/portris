@@ -1,10 +1,13 @@
 
+.SILENT:
+
 CC65HOME=/home/groepaz/Desktop/cc65/github-current/cc65/bin/
 CL65=$(CC65HOME)cl65
 #include $(PORTLIB)/makefile.config
 
 DEVNULL=/dev/null
 
+CP=cp
 XARGS=xargs
 
 #PORTLIB=~/groepaz/libs/cc65-portlib
@@ -15,31 +18,26 @@ XARGS=xargs
 PUCRUNCH=~/bin/pucrunch
 EXOMIZER=~/bin/exomizer
 
-#CL65FLAGS+=$(CCFLAGS)
-#CL65FLAGS+=-I $(PINC) -I $(PARCH)
-
-#CC65FLAGS+=-I $(PINC) -I $(PARCH)
 CC65FLAGS+=-Osir
 
-#JOYDRV=~/Desktop/cc65/github/cc65/target/
 JOYDRV := $(shell $(CL65) --print-target-path)
 
 ##########################################################################################
 
 .PHONY: all clean nice targets cc65 sdcc arm
 
-CBMTARGETS=c64 c6480 c128 c128vdc pet plus4 cbm510 cbm610 vic c16
-#geos c6480 vichacked vic40
+CBMTARGETS=c64 c6480 c6480m c128 c128vdc pet plus4 cbm510 cbm610 vic c16 geos
+#vichacked vic40
 
 CC65TARGETS=apple2 atari nes pcengine atmos
-CC65TARGETS+=$(CBMTARGETS) cbmloader cbmdisk
-#geosdisc
+CC65TARGETS+=$(CBMTARGETS) cbmloader cbmdisk geosdisk
+
 ARMTARGETS=gp32 gba
 SDCCTARGETS=gameboy
 
 help:
 	@echo some targets are:
-	@echo all clean nice cc65 $(CC65TARGETS) sdcc $(SDCCTARGETS) arm $(ARMTARGETS)
+	@echo all clean nice cbm cc65 $(CC65TARGETS) sdcc $(SDCCTARGETS) arm $(ARMTARGETS)
 	@echo look in the makefile for more.
 
 all: clean targets nice
@@ -94,6 +92,12 @@ c6480: $(SOURCEFILES)
 	@$(PUCRUNCH) -c64 -x2061 portris_c64_80x25.bin portris_c64_80x25.prg 1> $(DEVNULL) 2> $(DEVNULL)
 	@#$(EXOMIZER) -q -s 2061 -o portris_c64_80x25.prg portris_c64_80x25.bin
 
+c6480m: $(SOURCEFILES)
+	@echo "c64 + soft80..."
+	$(CL65) $(CC65FLAGS) -o portris_c64_80x25m.bin -D__SOFT80__ main.c c64-soft80mono.o
+	@$(PUCRUNCH) -c64 -x2061 portris_c64_80x25m.bin portris_c64_80x25m.prg 1> $(DEVNULL) 2> $(DEVNULL)
+	@#$(EXOMIZER) -q -s 2061 -o portris_c64_80x25m.prg portris_c64_80x25m.bin
+
 c128: $(SOURCEFILES)
 	@echo "c128 ..."
 	$(CL65) $(CC65FLAGS) -t c128 -o portris_c128.bin main.c
@@ -129,9 +133,11 @@ vichacked: $(SOURCEFILES)
 
 vic40: $(SOURCEFILES)
 		@echo "vic20 (expanded) + soft40..."
-		$(CL65) $(CC65FLAGS) -o portris_vic20_40x24.bin -t vic20 \
-		-C $(PARCH)/vic20/soft40/vic20exp.x -D__SOFT40__ main.c \
-			$(PLIB)/vic20soft40port.lib
+		$(CL65) $(CC65FLAGS) -t vic20 -o portris_vic20_40x24.bin -D__SOFT40__ -C vic20-32k.cfg main.c vic20-soft40.o
+		
+#		$(CL65) $(CC65FLAGS) -o portris_vic20_40x24.bin -t vic20 \
+#		-C $(PARCH)/vic20/soft40/vic20exp.x -D__SOFT40__ main.c \
+#			$(PLIB)/vic20soft40port.lib
 		@$(PUCRUNCH) -c20 -x5645 portris_vic20_40x24.bin portris_vic20_40x24.prg 1> $(DEVNULL) 2> $(DEVNULL)
 
 
@@ -155,6 +161,7 @@ cbmdisk: $(CBMTARGETS) cbmloader
 	-write loader.prg portris \
 	-write portris_c64.prg portris-c64 \
 	-write portris_c64_80x25.prg portris-c64-80x25 \
+	-write portris_c64_80x25m.prg portris-c64-80x25m \
 	-write portris_c128.prg portris-c128 \
 	-write portris_c128_vdc.prg portris-c128vdc \
 	-write portris_vic20.prg portris-vic20 \
@@ -193,20 +200,23 @@ cbmdisk: $(CBMTARGETS) cbmloader
 #		c1541 -attach portris.d64 -write $(JOYDRV)/{} {},p \
 #		> $(DEVNULL)
 
-portris_geos.cvt: $(SOURCEFILES)
+portris_geos.cvt: $(SOURCEFILES) portrisres.grc
 		@echo "geos ..."
-		@cc65 $(CC65FLAGS) -o main.s -t geos main.c
-		@ca65 -o main.o -t geos main.s
-		@ld65 -o portris_geos.cvt -t geos $(PLIB)/geosheader.o geos.o main.o \
-			$(PLIB)/geosport.lib \
-			geos.lib
+		$(CL65) $(CL65FLAGS) -t geos -o portris_geos.cvt portrisres.grc main.c
+		
+#		@cc65 $(CC65FLAGS) -o main.s -t geos main.c
+#		@ca65 -o main.o -t geos main.s
+#		@ld65 -o portris_geos.cvt -t geos $(PLIB)/geosheader.o geos.o main.o \
+#			$(PLIB)/geosport.lib \
+#			geos.lib
 
 geos: portris_geos.cvt
 
-geosdisc: geos
-		@echo "geosdisc ..."
-		@$(CP) $(PARCH)/geos/geos.d64.bak geos.d64
-		@c1541 -attach geos.d64 -write portris_geos.cvt portris.cvt > $(DEVNULL)
+geosdisk: geos
+		@echo "geosdisk ..."
+		$(CP) geos.d64.bak geos.d64
+#		c1541 -attach geos.d64 -write portris_geos.cvt portris.cvt > $(DEVNULL)
+		c1541 -attach geos.d64 -geoswrite portris_geos.cvt
 
 #
 #	apple machines
@@ -694,20 +704,12 @@ nice:
 #########################################################################################
 
 run: c64
-		@c1541 -format portris,00 d64 portris.d64 \
-		-write portris_c64.prg portris-c64 \
-		> $(DEVNULL)
+		@c1541 -format portris,00 d64 portris.d64 -write portris_c64.prg portris-c64 > $(DEVNULL)
 
-		@# copy the joystick drivers
-
-		@find ./../../lib/ -name "*.joy" -printf "%f\n" | \
+# copy the joystick drivers
+		@find $(JOYDRV)/c64/drv/joy -name "*.joy" -printf "%f\n" | \
 			xargs --replace \
-			c1541 -attach portris.d64 -write ./../../lib/{} {},u \
-			> $(DEVNULL)
-
-		@find $(JOYDRV)/ -name "*.joy" -printf "%f\n" | \
-			xargs --replace \
-			c1541 -attach portris.d64 -write $(JOYDRV)/{} {},u \
+			c1541 -attach portris.d64 -write $(JOYDRV)/c64/drv/joy/{} {},u \
 			> $(DEVNULL)
 		@x64sc --autostart portris.d64 > $(DEVNULL)
 
@@ -717,7 +719,7 @@ runc64: c64
 runc6480: c6480
 		@#x64sc --autostart portris_c64_80x25.prg #> $(DEVNULL)
 		@x64sc -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
-rungeos: geos geosdisc
+rungeos: geos geosdisk
 		@x64sc --autostart geos.d64 > $(DEVNULL)
 
 runc128: c128
@@ -733,7 +735,8 @@ runpet: pet
 		@xpet +truedrive -virtualdev --autostart portris.d64 > $(DEVNULL)
 
 runvic20: vic
-		@#xvic --autostart portris_vic20.prg > $(DEVNULL)
+#		@xvic --autostart portris_vic20.prg > $(DEVNULL)
+		@c1541 -format portris,00 d64 portris.d64 -write portris_vic20.prg portris-vic20 > $(DEVNULL)
 		@xvic -memory all -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
 runvichacked: vichacked
 		@#xvic --autostart portris_vic20_26x25.prg > $(DEVNULL)
@@ -760,19 +763,25 @@ runatari: atari
 		@xset r on
 
 runnes: nes
-		@#InfoNES portris_nes.nes
-		@fceu -pal portris_nes.nes
+#		@InfoNES portris_nes.nes
+#		@fceu -pal portris_nes.nes
+
+#		fceux portris_nes.nes
+		mednafen portris_nes.nes
 
 runatmos: atmos
-		@/usr/local/bin/xeuphoric -z 2; xset r on;rm printer.out
+		@xeuphoric -z 2; xset r on;rm printer.out
 
 runpce: pcengine
-		@#xvpce portris_pcengine.pce
-		@xyame -f 0 portris_pcengine.pce; xset r on
+#		@xvpce portris_pcengine.pce
+#		@xyame -f 0 portris_pcengine.pce; xset r on
+		mednafen portris_pcengine.pce
 
 runapple2: apple2
 		@echo yeah i want that too! how to use the damned emu? \:\o\)
 
+################################################################################
+		
 rungb: gameboy
 		@xgnuboy --scale=2 portris_gb.gb
 

@@ -101,7 +101,7 @@ libsrc/c64/waitvsync.s:4:; void waitvsync (void);
 #  define NOKBREPEAT            // FIXME: missing in cc65 lib
 #  define NOWAITVBLANK          // FIXME: missing in cc65 lib
 
-#elif defined(__C64__)
+#elif defined(__C64__) && !defined(__GEOS__)
 
 #if defined(__SOFT80__)
 #  define SCREENX	  80
@@ -182,6 +182,11 @@ libsrc/c64/waitvsync.s:4:; void waitvsync (void);
 #  define NOJOYSTICKS		// why is that so?
 #  define NOKBREPEAT
 #  define NOCLOCK
+
+#  define NOWAITVBLANK          // FIXME: missing in cc65 lib
+#define NOSTARSFX
+#define NOMELTDOWNFX
+#define NOJOYSELECT
 
 /* other cc65 targets */
 

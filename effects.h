@@ -18,7 +18,7 @@ void initstars(void);
 void flashit(unsigned char n);
 void flasher(void);
 #else
-# define flash(_x)
+# define flashit(_x)
 # define flasher()
 #endif
 

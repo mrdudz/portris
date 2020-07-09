@@ -51,34 +51,35 @@ source and define screen dimensions for new target etc)
 additional machine-depended things, api-additions etc are in their respective 
 subdirectories.
 
-		compiles	works	# of plr	has color
+        compiles    works    # of plr    has color
 
 cc65 standard targets:
 
-c64        yes		ok			4			yes
-c128       yes		ok          4			yes
-c128 vdc   yes		ok          8			yes
-c16        yes      ok			4			yes
-plus4      yes      ok			4			yes
-cbm510     yes		ok			4			yes
-cbm610     yes      ok			8			no
-pet        yes      ok			8			no
-geos (c64) yes      conio bugs	4    		no
-atari	   yes		ok			4    		no
-apple2     yes		?			4 (?)		no (?)
-atmos      yes		ok			3    		no
-nes        yes      ok          3           no
+c64        yes        ok          4           yes
+c128       yes        ok          4           yes
+c128 vdc   yes        ok          8           yes
+c16        yes        ok          4           yes
+plus4      yes        ok          4           yes
+cbm510     yes        ok          4           yes
+cbm610     yes        ok          8           no
+pet        yes        ok          8           no
+geos (c64) yes      conio bugs    4           no
+atari      yes        ok          4           no
+apple2     yes        ?           4 (?)       no (?)
+atmos      yes        ok          3           no
+nes        yes        ok          3           no
 
-lunix		no (library missing - FIXME)
-bbc			no (library missing - FIXME)
-vic20		no (program to large)
+c64+soft80 yes        ok          8           yes
+pcengine   yes        ok          6           yes
+vic20exp   yes        ok          2           yes
+
+lunix       no (library missing - FIXME)
+bbc         no (library missing - FIXME)
+vic20       no (program to large)
 
 custom/unsupported cc65 targets:
 
-c64+soft80 yes		ok			8			yes
-vic20exp   yes      ok          2		    yes
-vic20exp+soft40 yes ok          4		    no
-pcengine   yes      ok          6           yes
+vic20exp+soft40 yes   ok          4           no
 
 osa65       no (library missing - FIXME)
 
@@ -131,9 +132,9 @@ Status:
 
 - more targets need a (well) working conio
 - portable way to access directory needed
-	(for user-selectable joy driver)
+    (for user-selectable joy driver)
 - portable (microseconds-) timer api needed
-	(for better synchronization)
+    (for better synchronization)
 - exe-packer needed for apple2/atari and some cbm targets
 
 --------------------------------------------------------------------------------
@@ -187,7 +188,8 @@ c128(vdc):
 vic20:
 
 vic20+soft40/library:
-- add soft40
+- add soft40 implementation to cc65 lib
+- add "hard26" implementation to cc65 lib (maybe?)
 - add/fix cpeekchar (cant handle chars >0x7f atm)
 - reset videomode after exit
 

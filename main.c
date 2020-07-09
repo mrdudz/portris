@@ -1322,7 +1322,7 @@ gotoxy(1,5+1+i);
 
     // select driver + init joystick api
     init_joy();
-
+    
     #if !defined(NOHISCORES)
     inithiscore();
     #endif
@@ -1368,7 +1368,7 @@ gotoxy(1,5+1+i);
 
     // KLUDGES: enter geos desktop
 #if defined(__GEOS__)
-    EnterDeskTop();
+    //EnterDeskTop();
 #endif
 
     return (EXIT_SUCCESS);

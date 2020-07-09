@@ -21,10 +21,10 @@ const unsigned char *menustrings[]=
 #if !defined(NOKEYBOARD)
     "H show HiScores",
 # if !defined(NOJOYSELECT)
-       "C toggles Controls",
+    "C toggles Controls",
 # endif
 # if !defined(NOQUIT)
-       "Q Quit Program",
+    "Q Quit Program",
 # endif
     "Press SPACE to start",
 #else
@@ -33,7 +33,7 @@ const unsigned char *menustrings[]=
     "toggle Controls",
 # endif
 # if !defined(NOQUIT)
-       "Quit Program",
+    "Quit Program",
 # endif
     "start new Game",
 #endif
@@ -180,7 +180,7 @@ unsigned char c;
     textcolor(COLOR_WHITE);
     // copyright
     gotoxy(0,TOFFS5);
-    cputs_c("(w) 2002-2017 by Groepaz/Solution");
+    cputs_c("(w) 2002-2020 by Groepaz/Solution");
 
 #else
 
@@ -226,10 +226,10 @@ unsigned char c;
      gotoxy(0,TOFFS5);
     #if SCREENX < 26
            /*1234567890123456789012345*/
-    cputs_c("(w)'03-'17 by GPZ/TSN");
+    cputs_c("(w)'03-'20 by GPZ/TSN");
     #else
            /*123456789012345678901234567890*/
-    cputs_c("(w) 2003-2017 by Groepaz/Solution");
+    cputs_c("(w) 2003-2020 by Groepaz/Solution");
     #endif
 
     #endif
