@@ -16,9 +16,19 @@ WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP
 The bulk of this code was originally written almost 20 years ago, and since 
 then was mostly used to test my crude "conio" implementations on various
 targets (mostly consoles). A lot changed since then, the current goal is to
-clean this up and make CC65 the primary target. Everything here is very - and
-i mean VERY - messy, and you might have to wash your eyes with gasoline after
-looking at it. Don't say i didn't warn you :)
+clean this up and make CC65 the primary target. 
+
+You can find some other games with a similar target here:
+
+https://github.com/StewBC/cc65-Chess
+https://github.com/Fabrizio-Caruso/CROSS-CHASE
+
+The conio improvemnt PR that has pushed me to put this on github is here:
+
+https://github.com/cc65/cc65/pull/532
+
+Everything here is very - and i mean VERY - messy, and you might have to wash 
+your eyes with gasoline after looking at it. Don't say i didn't warn you :)
 
 To build, type "make cc65". Just typing "make" will show a list of targets you
 can use (some of which will not work, i guess).
@@ -28,6 +38,14 @@ To build the CBM programs, you will need additional tools in your path:
 - pucrunch
 - c1541 (from VICE)
 - petcat (from VICE)
+
+To build the PC-Engine image you need
+
+- dd
+
+To build the Apple2 and Apple2enh image you need
+
+- AppleCommander-ac-1.6.0.jar
 
 Some things will probably also require a bash shell - this stuff must be found
 and removed/replaced by generic makefile commands.
@@ -43,13 +61,20 @@ WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP
 
 ===============================================================================
 
-portability:
+Portability:
 
 no machine dependend parts, any target that has conio should work. (look at the 
 source and define screen dimensions for new target etc)
 
-additional machine-depended things, api-additions etc are in their respective 
-subdirectories.
+Dependencies:
+
+- conio output (required)
+- conio input (optional, required for keyboard input)
+- joystick api (optional, required for joystick input)
+  (either keyboard or joystick is recommended, obviously :))
+- file i/o (optional, required for saving hiscore)
+
+-------------------------------------------------------------------------------
 
         compiles    works    # of plr    has color
 
@@ -66,7 +91,7 @@ pet        yes        ok          8           no
 geos (c64) yes      conio bugs    4           no
 atari      yes        ok          4           no
 apple2     yes        ?           4 (?)       no (?)
-atmos      yes        ok          3           no
+atmos      yes        ?           3           no
 nes        yes        ok          3           no
 
 c64+soft80 yes        ok          8           yes
@@ -93,39 +118,6 @@ ARM Targets
 GBA        yes      ok          3           yes
 GP32       yes      ok          4           yes
 
-Dependencies:
-
-conio output (required)
-conio input (optional, required for keyboard input)
-joystick api (optional, required for joystick input)
-(either keyboard or joystick is recommended, obviously :))
-file i/o (optional, required for saving hiscore)
-
-===============================================================================
-
-version log:
-
-0.0.3   -   Atmos Port
-        -   GBA Port
-        -   GP32 Port
-0.0.2:  -   "make all" compiles all working targets in one go
-        -   some stuff prepared for ppl who might want to port the code
-            to a yet not working target
-        -   UZ fixed big-struct related compiler bug so now compilation -Osir works
-        -   some little speed tweaks by UZ
-        -   support for existing joystick api(s)
-        -   "drop" button works :)
-        -   vic20 conio fixes
-        -   vic20 hacked screen (26*25 characters)
-        -   c64 80-columns screen
-        -   vic20 40-columns screen
-        -   c64 joydriver for protovision 4 player adapter
-        -   c64 joydriver for dxs/hit 4 player adapter
-        -   added highscore list
-        -   NES port, all conio etc added that is needed to run 65tetris
-        -   PCEngine Port, also all conio stuff added that was needed
-0.0.1:  -   inital release
- 
 ===============================================================================
 
 Status:
@@ -246,3 +238,43 @@ More Ports?
 - (8bit targets) LUnix, Atari Lynx, Atari VCS2600 (hardly :o)), BBC-Micro...
 - (16bit targets ???) SuperCPU, SNES, C=1 (?) ...
 - (32bit targets ?!?!) Dreamcast, Playstation, Playstation2 (?), Gamecube (?) ...
+
+===============================================================================
+
+very old stuff:
+
+v 0.0.2 can be found here:
+http://hitmen.c02.at/files/cc65/65tris_0.0.2_90percent.tar.gz
+
+very old "portlib" things, cc65 "compatible" conio for other targets, and some
+things that have since then been merged into cc65 can be found here:
+http://hitmen.c02.at/files/portlib/cc65-portlib.zip
+
+very old PC version of the portlib stuff is here:
+http://hitmen.c02.at/files/portlib/portlib_pc.zip
+
+===============================================================================
+
+version log:
+
+0.0.3   -   Atmos Port
+        -   GBA Port
+        -   GP32 Port
+0.0.2:  -   "make all" compiles all working targets in one go
+        -   some stuff prepared for ppl who might want to port the code
+            to a yet not working target
+        -   UZ fixed big-struct related compiler bug so now compilation -Osir works
+        -   some little speed tweaks by UZ
+        -   support for existing joystick api(s)
+        -   "drop" button works :)
+        -   vic20 conio fixes
+        -   vic20 hacked screen (26*25 characters)
+        -   c64 80-columns screen
+        -   vic20 40-columns screen
+        -   c64 joydriver for protovision 4 player adapter
+        -   c64 joydriver for dxs/hit 4 player adapter
+        -   added highscore list
+        -   NES port, all conio etc added that is needed to run 65tetris
+        -   PCEngine Port, also all conio stuff added that was needed
+0.0.1:  -   inital release
+ 

@@ -29,7 +29,7 @@ JOYDRV := $(shell $(CL65) --print-target-path)
 CBMTARGETS=c64 c6480 c6480m c128 c128vdc pet plus4 cbm510 cbm610 vic c16 geos
 #vichacked vic40
 
-CC65TARGETS=apple2 atari nes pcengine atmos
+CC65TARGETS=apple2 apple2e atari nes pcengine atmos
 CC65TARGETS+=$(CBMTARGETS) cbmloader cbmdisk geosdisk
 
 ARMTARGETS=gp32 gba
@@ -72,7 +72,7 @@ SOURCEFILES=\
 #	6502/cc65
 ##########################################################################################
 
-.PHONY: cbmloader c64 c128 c128vdc plus4 c16 vic20 cbm510 cbm610 pet atari apple2 geos geosdic cbmdisk
+.PHONY: cbmloader c64 c128 c128vdc plus4 c16 vic20 cbm510 cbm610 pet atari apple2 apple2e geos geosdic cbmdisk
 
 cbmloader: loader.bas
 	@echo "cbm loader..."
@@ -201,38 +201,39 @@ cbmdisk: $(CBMTARGETS) cbmloader
 #		> $(DEVNULL)
 
 portris_geos.cvt: $(SOURCEFILES) portrisres.grc
-		@echo "geos ..."
-		$(CL65) $(CL65FLAGS) -t geos -o portris_geos.cvt portrisres.grc main.c
-		
-#		@cc65 $(CC65FLAGS) -o main.s -t geos main.c
-#		@ca65 -o main.o -t geos main.s
-#		@ld65 -o portris_geos.cvt -t geos $(PLIB)/geosheader.o geos.o main.o \
-#			$(PLIB)/geosport.lib \
-#			geos.lib
+	@echo "geos ..."
+	$(CL65) $(CL65FLAGS) -t geos -o portris_geos.cvt portrisres.grc main.c
 
 geos: portris_geos.cvt
 
 geosdisk: geos
-		@echo "geosdisk ..."
-		$(CP) geos.d64.bak geos.d64
-#		c1541 -attach geos.d64 -write portris_geos.cvt portris.cvt > $(DEVNULL)
-		c1541 -attach geos.d64 -geoswrite portris_geos.cvt
+	@echo "geosdisk ..."
+	$(CP) geos.d64.bak geos.d64
+#	c1541 -attach geos.d64 -write portris_geos.cvt portris.cvt > $(DEVNULL)
+	c1541 -attach geos.d64 -geoswrite portris_geos.cvt
 
 #
 #	apple machines
 #
 
 apple2: $(SOURCEFILES)
-		@echo "apple2 ..."
-		$(CL65) $(CL65FLAGS) -o portris_apple2.xex -t apple2 main.c
+	@echo "apple2 ..."
+	$(CL65) $(CL65FLAGS) -o portris_apple2.xex -t apple2 -C apple2-system.cfg main.c
+	cp ProDOS_2_4_2.dsk portris_apple2.dsk
+	java -jar ~/bin/AppleCommander-ac-1.6.0.jar -p portris_apple2.dsk portris.system sys < portris_apple2.xex
 
+apple2e: $(SOURCEFILES)
+	@echo "apple2e ..."
+	$(CL65) $(CL65FLAGS) -o portris_apple2e.xex -t apple2enh -C apple2-system.cfg main.c
+	cp ProDOS_2_4_2.dsk portris_apple2e.dsk
+	java -jar ~/bin/AppleCommander-ac-1.6.0.jar -p portris_apple2e.dsk portris.system sys < portris_apple2e.xex
 #
 #	atari machines
 #
 
 atari: $(SOURCEFILES)
-		@echo "atari800 ..."
-		$(CL65) $(CL65FLAGS) -o portris_atari.xex -t atari main.c
+	@echo "atari800 ..."
+	$(CL65) $(CL65FLAGS) -o portris_atari.xex -t atari main.c
 #
 #	other machines or operating systems
 #
@@ -618,154 +619,157 @@ macos-sdl:
 .PHONY: clean nice
 
 clean:
-		@$(RM) portris.exe
-		@$(RM) portris
-		@$(RM) portris*.idb
-		@$(RM) portris*.prg
-		@$(RM) portris*.gb
-		@$(RM) portris*.gba
-		@$(RM) loader.prg
-		@$(RM) portris*.cvt
-		@$(RM) portris*.xex
-		@$(RM) portris*.bin
-		@$(RM) portris*.nes
-		@$(RM) portris*.pce
-		@$(RM) portris*.sav
-		@$(RM) portris*.mem
-		@$(RM) portris*.rst
-		@$(RM) portris*.ihx
-		@$(RM) ang-c++.ihx
-		@$(RM) debug.log
-		@$(RM) portris*.lnk
-		@$(RM) portris*.elf
-		@$(RM) portris*.gxb
-		@$(RM) gbz80.lib
-		@$(RM) *.TAP
-		@$(RM) *.tap
-		@$(RM) *.s
-		@$(RM) *.asm
-		@$(RM) *.rel
-		@$(RM) *.sym
-		@$(RM) *.joy
-		@$(RM) *.lnk
-		@$(RM) *.pre
-		@$(RM) *.cfg
-		@$(RM) *.def
-		@$(RM) pass1
-		@$(RM) pass2
-		@$(RM) pass3
-		@$(RM) pass4
-		@$(RM) pass5
-		@$(RM) *.o
-		@$(RM) *.lst
-		@$(RM) *.map
-		@$(RM) *.d64
+	@$(RM) portris.exe
+	@$(RM) portris
+	@$(RM) portris*.idb
+	@$(RM) portris*.prg
+	@$(RM) portris*.gb
+	@$(RM) portris*.gba
+	@$(RM) loader.prg
+	@$(RM) portris*.cvt
+	@$(RM) portris*.xex
+	@$(RM) portris*.bin
+	@$(RM) portris*.nes
+	@$(RM) portris*.pce
+	@$(RM) portris*.sav
+	@$(RM) portris*.mem
+	@$(RM) portris*.rst
+	@$(RM) portris*.ihx
+	@$(RM) ang-c++.ihx
+	@$(RM) debug.log
+	@$(RM) portris*.lnk
+	@$(RM) portris*.elf
+	@$(RM) portris*.gxb
+	@$(RM) gbz80.lib
+	@$(RM) *.TAP
+	@$(RM) *.tap
+	@$(RM) *.s
+	@$(RM) *.asm
+	@$(RM) *.rel
+	@$(RM) *.sym
+	@$(RM) *.joy
+	@$(RM) *.lnk
+	@$(RM) *.pre
+	@$(RM) *.cfg
+	@$(RM) *.def
+	@$(RM) pass1
+	@$(RM) pass2
+	@$(RM) pass3
+	@$(RM) pass4
+	@$(RM) pass5
+	@$(RM) *.o
+	@$(RM) *.lst
+	@$(RM) *.map
+	@$(RM) *.d64
 
 nice:
-		@$(RM) portris*.prg
-		@$(RM) loader.prg
-		@$(RM) portris*.bin
-		@$(RM) portris*.srm
-		@$(RM) portris*.sav
-		@$(RM) portris*.elf
-		@$(RM) *.s
-		@$(RM) *.asm
-		@$(RM) *.rel
-		@$(RM) *.sym
-		@$(RM) *.joy
-		@$(RM) *.lnk
-		@$(RM) *.pre
-		@$(RM) *.cfg
-		@$(RM) *.def
-		@$(RM) pass1
-		@$(RM) pass2
-		@$(RM) pass3
-		@$(RM) pass4
-		@$(RM) pass5
-		@$(RM) *.o
-		@$(RM) *.lst
-		@$(RM) *.map
+	@$(RM) portris*.prg
+	@$(RM) loader.prg
+	@$(RM) portris*.bin
+	@$(RM) portris*.srm
+	@$(RM) portris*.sav
+	@$(RM) portris*.elf
+	@$(RM) *.s
+	@$(RM) *.asm
+	@$(RM) *.rel
+	@$(RM) *.sym
+	@$(RM) *.joy
+	@$(RM) *.lnk
+	@$(RM) *.pre
+	@$(RM) *.cfg
+	@$(RM) *.def
+	@$(RM) pass1
+	@$(RM) pass2
+	@$(RM) pass3
+	@$(RM) pass4
+	@$(RM) pass5
+	@$(RM) *.o
+	@$(RM) *.lst
+	@$(RM) *.map
 
 #########################################################################################
 #   some stuff for lazy peeps like me :o)
 #########################################################################################
 
 run: c64
-		@c1541 -format portris,00 d64 portris.d64 -write portris_c64.prg portris-c64 > $(DEVNULL)
+	@c1541 -format portris,00 d64 portris.d64 -write portris_c64.prg portris-c64 > $(DEVNULL)
 
 # copy the joystick drivers
-		@find $(JOYDRV)/c64/drv/joy -name "*.joy" -printf "%f\n" | \
-			xargs --replace \
-			c1541 -attach portris.d64 -write $(JOYDRV)/c64/drv/joy/{} {},u \
-			> $(DEVNULL)
-		@x64sc --autostart portris.d64 > $(DEVNULL)
+	@find $(JOYDRV)/c64/drv/joy -name "*.joy" -printf "%f\n" | \
+		xargs --replace \
+		c1541 -attach portris.d64 -write $(JOYDRV)/c64/drv/joy/{} {},u \
+		> $(DEVNULL)
+	@x64sc --autostart portris.d64 > $(DEVNULL)
 
 runc64: c64
-		@#x64sc --autostart portris_c64.prg > $(DEVNULL)
-		@x64sc -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+	@#x64sc --autostart portris_c64.prg > $(DEVNULL)
+	@x64sc -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
 runc6480: c6480
-		@#x64sc --autostart portris_c64_80x25.prg #> $(DEVNULL)
-		@x64sc -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+	@#x64sc --autostart portris_c64_80x25.prg #> $(DEVNULL)
+	@x64sc -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
 rungeos: geos geosdisk
-		@x64sc --autostart geos.d64 > $(DEVNULL)
+	@x64sc --autostart geos.d64 > $(DEVNULL)
 
 runc128: c128
-		@#x128 --autostart portris_c128.prg > $(DEVNULL)
-		@x128 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+	@#x128 --autostart portris_c128.prg > $(DEVNULL)
+	@x128 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
 runc128vdc: c128vdc
-		@#x128 -8 portris.d64 --autostart portris_c128_vdc.prg > $(DEVNULL)
-		@x128 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+	@#x128 -8 portris.d64 --autostart portris_c128_vdc.prg > $(DEVNULL)
+	@x128 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
 
 runpet: pet
-		@#xpet --autostart portris_pet.prg #> $(DEVNULL)
-		@#xpet -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
-		@xpet +truedrive -virtualdev --autostart portris.d64 > $(DEVNULL)
+	@#xpet --autostart portris_pet.prg #> $(DEVNULL)
+	@#xpet -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+	@xpet +truedrive -virtualdev --autostart portris.d64 > $(DEVNULL)
 
 runvic20: vic
-#		@xvic --autostart portris_vic20.prg > $(DEVNULL)
-		@c1541 -format portris,00 d64 portris.d64 -write portris_vic20.prg portris-vic20 > $(DEVNULL)
-		@xvic -memory all -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+#	@xvic --autostart portris_vic20.prg > $(DEVNULL)
+	@c1541 -format portris,00 d64 portris.d64 -write portris_vic20.prg portris-vic20 > $(DEVNULL)
+	@xvic -memory all -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
 runvichacked: vichacked
-		@#xvic --autostart portris_vic20_26x25.prg > $(DEVNULL)
-		@xvic -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+	@#xvic --autostart portris_vic20_26x25.prg > $(DEVNULL)
+	@xvic -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
 runvic40: vic40
-		@#xvic --autostart portris_vic20_40x24.prg > $(DEVNULL)
-		@xvic -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+	@#xvic --autostart portris_vic20_40x24.prg > $(DEVNULL)
+	@xvic -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
 
 runc16: c16
-		@#xplus4 --autostart portris_c16.prg > $(DEVNULL)
-		@xplus4 -model c232 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+	@#xplus4 --autostart portris_c16.prg > $(DEVNULL)
+	@xplus4 -model c232 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
 runplus4: plus4
-		@#xplus4 --autostart portris_plus4.prg > $(DEVNULL)
-		@xplus4 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+	@#xplus4 --autostart portris_plus4.prg > $(DEVNULL)
+	@xplus4 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
 runcbm510: cbm510
-		@#xcbm2 -model 510 --autostart portris_cbm510.prg > $(DEVNULL)
-		@xcbm5x0 +truedrive -virtualdev -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+	@#xcbm2 -model 510 --autostart portris_cbm510.prg > $(DEVNULL)
+	@xcbm5x0 +truedrive -virtualdev -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
 runcbm610: cbm610
-		@#xcbm2 -model 610 --autostart portris_cbm610.prg > $(DEVNULL)
-		@xcbm2 +truedrive -virtualdev -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+	@#xcbm2 -model 610 --autostart portris_cbm610.prg > $(DEVNULL)
+	@xcbm2 +truedrive -virtualdev -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
 
 runatari: atari
-		@atari800 -windowed -run portris_atari.xex > $(DEVNULL)
-		@xset r on
+	@atari800 -windowed -run portris_atari.xex > $(DEVNULL)
+	@xset r on
 
 runnes: nes
-#		@InfoNES portris_nes.nes
-#		@fceu -pal portris_nes.nes
+#	@InfoNES portris_nes.nes
+#	@fceu -pal portris_nes.nes
 
-#		fceux portris_nes.nes
-		mednafen portris_nes.nes
+#	fceux portris_nes.nes
+	mednafen portris_nes.nes
 
 runatmos: atmos
-		@xeuphoric -z 2; xset r on;rm printer.out
+	@xeuphoric -z 2; xset r on;rm printer.out
 
 runpce: pcengine
-#		@xvpce portris_pcengine.pce
-#		@xyame -f 0 portris_pcengine.pce; xset r on
-		mednafen -force_module pce portris_pcengine.pce
+#	@xvpce portris_pcengine.pce
+#	@xyame -f 0 portris_pcengine.pce; xset r on
+	mednafen -force_module pce portris_pcengine.pce
 
 runapple2: apple2
-		@echo yeah i want that too! how to use the damned emu? \:\o\)
+	linapple --d1 portris_apple2.dsk --autoboot
+
+runapple2e: apple2e
+	linapple --d1 portris_apple2e.dsk --autoboot
 
 ################################################################################
 		
