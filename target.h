@@ -294,6 +294,26 @@ hiscore screen
 
 #  define NOJOYSTICKS       // FIXME
 
+/* program too large */
+#elif defined(__GAMATE__)
+#  define SCREENX	  (32)    // FIXME
+#  define SCREENY	  (28)    // FIXME
+#  define NOCOLORS
+#  define NOBGCOLORS
+#  define NOBORDER
+#  define NOKBREPEAT
+#  define NOJOYSELECT
+#  define NOKEYBOARD
+#  define NOQUIT
+
+#  define NOJOYSTICKS       // FIXME
+#  define NOSTARSFX         // FIXME
+
+#define NOMELTDOWNFX
+//#define NO2DIMARRAYS
+//#define NOGLOBALPTRINIT
+#define NOHISCORES
+
 /* misc targets */
 
 #elif defined(__GAMEBOY__)

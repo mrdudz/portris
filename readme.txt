@@ -33,7 +33,8 @@ your eyes with gasoline after looking at it. Don't say i didn't warn you :)
 To build, type "make cc65". Just typing "make" will show a list of targets you
 can use (some of which will not work, i guess).
 
-You also have to edit the CC65HOME at the top of the Makefile eventually :)
+You also have to edit the CC65HOME at the top of the Makefile eventually, and
+perhaps adjust some pathes to the required tools.
 
 To build the CBM programs, you will need additional tools in your path:
 
@@ -49,6 +50,10 @@ To build the Apple2 and Apple2enh image you need
 
 - Java
 - AppleCommander-ac-1.6.0.jar
+
+To build the gamate image (which doesnt work yet) you will need
+
+- gamate-fixcart
 
 Some things will probably also require a bash shell - this stuff must be found
 and removed/replaced by generic makefile commands.
@@ -99,7 +104,9 @@ vic20exp   yes        ok          2           yes
 
 lunix       no (library missing - FIXME)
 bbc         no (library missing - FIXME)
-vic20       no (program to large)
+
+vic20       no (program too large)
+gamate      no (program too large)
 
 custom/unsupported cc65 targets:
 

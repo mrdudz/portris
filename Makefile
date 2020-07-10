@@ -8,13 +8,16 @@ CC65FLAGS+=-Osir
 JOYDRV := $(shell $(CL65) --print-target-path)
 
 # c64/cbm tools
-PUCRUNCH=~/bin/pucrunch
-EXOMIZER=~/bin/exomizer
+PUCRUNCH=pucrunch
+EXOMIZER=exomizer
 C1541=c1541
 PETCAT=petcat
 
 # apple2 tools
 ACMD=~/bin/AppleCommander-ac-1.6.0.jar
+
+# gamate tools
+GFIX=gamate-fixcart
 
 # generic tools
 CP=cp
@@ -28,7 +31,7 @@ DEVNULL=/dev/null
 .PHONY: all clean nice targets cc65
 
 CBMTARGETS=c64 c6480 c6480m c128 c128vdc pet plus4 cbm510 cbm610 vic c16 geos
-#vichacked vic40
+#vichacked vic40 gamate
 
 CC65TARGETS=apple2 apple2e atari nes pcengine atmos
 CC65TARGETS+=$(CBMTARGETS) cbmloader cbmdisk geosdisk
@@ -214,7 +217,7 @@ atari: $(SOURCEFILES)
 #	other machines or operating systems
 #
 
-.PHONY: nes osa65 atmos pcengine
+.PHONY: nes osa65 atmos pcengine gamate
 
 nes: $(SOURCEFILES)
 	@echo "nes ..."
@@ -231,6 +234,12 @@ atmos: $(SOURCEFILES)
 	@echo "atmos ..."
 	$(CL65) $(CL65FLAGS) -o portlib_atmos.tap -t atmos main.c
 #	-oric.header atmos.prg portlib_atmos.tap --quiet-autostart
+
+# FIXME: file too larger
+gamate: $(SOURCEFILES)
+	@echo "gamate ..."
+	$(CL65) -Osir -t gamate -o portris_gamate.bin main.c
+	$(GFIX) portris_gamate.bin
 
 # dont compile (yet?!) due to missing library-support
 osa65: $(SOURCEFILES)

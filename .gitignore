@@ -1,7 +1,5 @@
+main.o
 portlib_atmos.tap
-geos.d64
-loader.prg
-portris.d64
 portris_apple2.xex
 portris_atari.xex
 portris_c128.bin
@@ -30,3 +28,6 @@ portris_vic20.prg
 portris_apple2.dsk
 portris_apple2e.dsk
 portris_apple2e.xex
+loader.prg
+geos.d64
+portris.d64
