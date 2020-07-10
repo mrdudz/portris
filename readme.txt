@@ -15,9 +15,9 @@ WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP
 
 The bulk of this code was originally written almost 20 years ago, and since 
 then was mostly used to test my crude "conio" implementations on various
-targets (mostly consoles). A lot change since then, the current goal is to
+targets (mostly consoles). A lot changed since then, the current goal is to
 clean this up and make CC65 the primary target. Everything here is very - and
-i mean VERY messy and you might have to wash your eyes with gasoline after
+i mean VERY - messy, and you might have to wash your eyes with gasoline after
 looking at it. Don't say i didn't warn you :)
 
 To build, type "make cc65". Just typing "make" will show a list of targets you
