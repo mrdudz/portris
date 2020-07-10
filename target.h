@@ -179,7 +179,7 @@ hiscore screen
 
 // that ok ?
 #  define SCREENX	  40
-#  define SCREENY	  25
+#  define SCREENY	  24
 #  define NOCOLORS
 #  define NOBGCOLORS
 #  define NOJOYSTICKS
@@ -193,7 +193,7 @@ hiscore screen
 #elif defined(__APPLE2__)
 // that ok ?
 #  define SCREENX	  40
-#  define SCREENY	  25
+#  define SCREENY	  24
 #  define NOCOLORS
 #  define NOBGCOLORS
 #  define NOJOYSTICKS
