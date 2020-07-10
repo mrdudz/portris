@@ -160,8 +160,8 @@ cbmdisk: $(CBMTARGETS) cbmloader
 	@c1541 -format portris,00 d64 portris.d64 \
 	-write loader.prg portris \
 	-write portris_c64.prg portris-c64 \
-	-write portris_c64_80x25.prg portris-c64-80x25 \
-	-write portris_c64_80x25m.prg portris-c64-80x25m \
+	-write portris_c64_80x25.prg portris-c64-80 \
+	-write portris_c64_80x25m.prg portris-c64-80m \
 	-write portris_c128.prg portris-c128 \
 	-write portris_c128_vdc.prg portris-c128vdc \
 	-write portris_vic20.prg portris-vic20 \
@@ -240,28 +240,15 @@ atari: $(SOURCEFILES)
 .PHONY: nes osa65 atmos pcengine
 
 nes: $(SOURCEFILES)
-		@echo "nes ..."
+	@echo "nes ..."
 	$(CL65) $(CC65FLAGS) -o portris_nes.nes -t nes main.c
-#		$(CL65) $(CL65FLAGS) -o portris_nes.nes -t nes main.c \
-#			$(PLIB)/nesport.lib \
-#			nes.lib \
-#			$(PLIB)/nesport.lib
 
-#--cpu 65C02
 pcengine: $(SOURCEFILES)
-		@echo "pcengine ..."
-	$(CL65) $(CC65FLAGS) -Wl -D__CARTSIZE__=32768 -o portris_pcengine.pce -t pce main.c
-        #--cpu 65C02
-#		$(CL65) -lporttris.lst $(CL65FLAGS) --cpu 65C02 --asm-include-dir ./pcengine -o portris_pcengine.pce -t none \
-#			-C $(PARCH)/pcengine/pcengine.x -D__PCENGINE__ \
-#			$(PLIB)/pcenginestart.o \
-#			main.c \
-#			$(PLIB)/pcengineport.lib \
-#			$(PARCH)/pcengine/none65C02.lib \
-#			$(PLIB)/pcengineport.lib \
-
-#            $(PARCH)/pcengine/none65C02.lib \
-#			$(PLIB)/pcengineport.lib
+	@echo "pcengine ..."
+	$(CL65) $(CC65FLAGS) -Wl -D__CARTSIZE__=0x8000 -o portris_pcengine.bin -t pce main.c
+# the first 8k block must be the last 8k block in the cartridge image
+	dd if=portris_pcengine.bin bs=8K skip=3 > portris_pcengine.pce
+	dd if=portris_pcengine.bin bs=8K count=3 >> portris_pcengine.pce
 
 atmos: $(SOURCEFILES)
 		@echo "atmos ..."
@@ -775,7 +762,7 @@ runatmos: atmos
 runpce: pcengine
 #		@xvpce portris_pcengine.pce
 #		@xyame -f 0 portris_pcengine.pce; xset r on
-		mednafen portris_pcengine.pce
+		mednafen -force_module pce portris_pcengine.pce
 
 runapple2: apple2
 		@echo yeah i want that too! how to use the damned emu? \:\o\)
