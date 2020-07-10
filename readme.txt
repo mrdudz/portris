@@ -33,6 +33,8 @@ your eyes with gasoline after looking at it. Don't say i didn't warn you :)
 To build, type "make cc65". Just typing "make" will show a list of targets you
 can use (some of which will not work, i guess).
 
+You also have to edit the CC65HOME at the top of the Makefile eventually :)
+
 To build the CBM programs, you will need additional tools in your path:
 
 - pucrunch
@@ -45,14 +47,11 @@ To build the PC-Engine image you need
 
 To build the Apple2 and Apple2enh image you need
 
+- Java
 - AppleCommander-ac-1.6.0.jar
 
 Some things will probably also require a bash shell - this stuff must be found
 and removed/replaced by generic makefile commands.
-
-There are also a lot of references to other targets, my old development setups
-on various machines, my own libraries (which are not included here) and god
-knows what. None of this will work right now, don't bother :)
 
 Everything below is copied together from the old and very outdated 
 documentation and still needs a major overhaul.
@@ -91,7 +90,7 @@ pet        yes        ok          8           no
 geos (c64) yes      conio bugs    4           no
 atari      yes        ok          4           no
 apple2     yes        ?           4 (?)       no (?)
-atmos      yes        ?           3           no
+atmos      yes        ok          3           no
 nes        yes        ok          3           no
 
 c64+soft80 yes        ok          8           yes
@@ -108,6 +107,8 @@ vic20exp+soft40 yes   ok          4           no
 
 osa65       no (library missing - FIXME)
 
+-----------------------------------------------------
+
 Z80 Targets
 
 Spectrum   yes      buggy       3           yes
@@ -117,6 +118,10 @@ ARM Targets
 
 GBA        yes      ok          3           yes
 GP32       yes      ok          4           yes
+
+PPC Targets
+
+Gamecube   yes      ok          4           yes
 
 ===============================================================================
 
@@ -252,6 +257,12 @@ http://hitmen.c02.at/files/portlib/cc65-portlib.zip
 
 very old PC version of the portlib stuff is here:
 http://hitmen.c02.at/files/portlib/portlib_pc.zip
+
+Makefile.attic:
+
+There are also a lot of references to other targets, my old development setups
+on various machines, my own libraries (which are not included here) and god
+knows what. None of this will work right now, don't bother :)
 
 ===============================================================================
 

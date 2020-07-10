@@ -65,20 +65,6 @@ hiscore screen
 
 /* CBM targets (cc65) */
 
-/*
-libsrc/cx16/waitvsync.s:4:; void waitvsync (void);
-libsrc/gamate/waitvsync.s:4:; void waitvsync (void);
-libsrc/plus4/waitvsync.s:4:; void waitvsync (void);
-libsrc/c16/waitvsync.s:1:.include "../plus4/waitvsync.s"
-libsrc/c128/waitvsync.s:4:; void waitvsync (void);
-libsrc/vic20/waitvsync.s:4:; void waitvsync (void);
-libsrc/nes/waitvsync.s:5:; void waitvsync(void);
-libsrc/pce/waitvsync.s:4:; void waitvsync (void);
-libsrc/apple2/waitvsync.s:4:; void waitvsync (void);
-libsrc/cbm510/waitvsync.s:4:; void waitvsync (void);
-libsrc/c64/waitvsync.s:4:; void waitvsync (void);
-*/
-
 #if defined(__PET__)
 #  define SCREENX	  80
 #  define SCREENY	  25
@@ -189,6 +175,20 @@ libsrc/c64/waitvsync.s:4:; void waitvsync (void);
 #define NOJOYSELECT
 
 /* other cc65 targets */
+#elif defined(__APPLE2ENH__)
+
+// that ok ?
+#  define SCREENX	  40
+#  define SCREENY	  25
+#  define NOCOLORS
+#  define NOBGCOLORS
+#  define NOJOYSTICKS
+#  define NOKBREPEAT
+#  define NOCLOCK
+
+#  define NOTVMODE              // FIXME: missing in cc65 lib
+#define NOSTARSFX
+#define NOMELTDOWNFX
 
 #elif defined(__APPLE2__)
 // that ok ?

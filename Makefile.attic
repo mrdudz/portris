@@ -1,0 +1,371 @@
+# this file contains all the old outdated stuff that was remove from the
+# original makefile.
+ARMTARGETS=gp32 gba
+SDCCTARGETS=gameboy
+
+armcctargets: $(ARMTARGETS)
+sdcctargets: $(SDCCTARGETS)
+arm: armcctargets
+sdcc: sdcctargets
+
+targets: cc65 sdcc arm
+#########################################################################################
+# Z80/SDCC
+##########################################################################################
+
+.PHONY: gameboy gb_sdcc
+
+GBCCFLAGS+=-I $(PINC) -I $(PARCH) -I .
+
+gameboy: gb_sdcc
+
+gb_sdcc: $(SOURCEFILES)
+		@echo "gb(c) / sdcc ..."
+
+		@$(GBCC) $(GBCCFLAGS) -S main.c -o main.asm
+		@$(GBAS) $(GBASFLAGS) -o main.o main.asm
+
+		@$(GBLD) -- -z portris_gb.gb \
+			$(PLIB)/gbstart.o \
+ 		   /usr/local/share/sdcc/lib/gbz80/crt0_rle.o \
+		   \
+			main.o \
+			\
+			-k $(PARCH)/gb/ -l $(PARCH)/gb/gbport.lib \
+			\
+		   /usr/local/share/sdcc/lib/gbz80/_strcat.o \
+  		   /usr/local/share/sdcc/lib/gbz80/_strcpy.o \
+  		   /usr/local/share/sdcc/lib/gbz80/_strlen.o \
+  		   /usr/local/share/sdcc/lib/gbz80/_memcpy.o \
+  		   /usr/local/share/sdcc/lib/gbz80/_memset.o \
+		   /usr/local/share/sdcc/lib/gbz80/_modslong.o \
+		   /usr/local/share/sdcc/lib/gbz80/_divslong.o \
+		   /usr/local/share/sdcc/lib/gbz80/_modulong.o \
+		   /usr/local/share/sdcc/lib/gbz80/_divulong.o \
+		   /usr/local/share/sdcc/lib/gbz80/_mullong.o \
+		   /usr/local/share/sdcc/lib/gbz80/shift.o \
+		   /usr/local/share/sdcc/lib/gbz80/mul.o \
+		   /usr/local/share/sdcc/lib/gbz80/div.o \
+		   /usr/local/share/sdcc/lib/gbz80/stubs.o \
+			\
+			$(PARCH)/gb/conio.o \
+			$(PARCH)/gb/memmove.o \
+			$(PARCH)/gb/vsprintf.o \
+			$(PARCH)/gb/_oserror.o \
+			$(PARCH)/gb/ltostr.o \
+			$(PARCH)/gb/get_tv.o \
+ 			$(PARCH)/gb/joystick.o\
+			$(PARCH)/gb/font.o \
+		$(PARCH)/gb/init_tt.o\
+		$(PARCH)/gb/set_spr.o\
+		$(PARCH)/gb/mv_spr.o\
+		$(PARCH)/gb/arand.o\
+		$(PARCH)/gb/hiramcpy.o\
+		$(PARCH)/gb/cpy_data.o \
+		$(PARCH)/gb/delay.o \
+		$(PARCH)/gb/drawing.o\
+		$(PARCH)/gb/rand.o\
+		$(PARCH)/gb/scroll_b.o\
+		$(PARCH)/gb/scroll_s.o\
+		$(PARCH)/gb/get_bk_t.o \
+		$(PARCH)/gb/scroll_w.o\
+		$(PARCH)/gb/get_data.o \
+		$(PARCH)/gb/serial.o\
+		$(PARCH)/gb/get_prop.o  \
+		$(PARCH)/gb/set_bk_t.o\
+		$(PARCH)/gb/set_data.o\
+		$(PARCH)/gb/get_wi_t.o \
+		$(PARCH)/gb/set_prop.o\
+		$(PARCH)/gb/get_xy_t.o \
+		$(PARCH)/gb/set_wi_t.o\
+		$(PARCH)/gb/set_xy_t.o\
+		$(PARCH)/gb/fontms.o
+
+.PHONY: spectrum
+
+Z80CFLAGS+=-I $(PINC) -I $(PARCH)
+
+spectrum: $(SOURCEFILES)
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/conio.o $(PARCH)/spectrum/conio.c
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/memmove.o $(PARCH)/spectrum/memmove.c
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/fclose.o $(PARCH)/spectrum/fclose.c
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/open.o $(PARCH)/spectrum/open.c
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/ltostr.o $(PARCH)/spectrum/ltostr.c
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/vsprintf.o $(PARCH)/spectrum/vsprintf.c
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/close.o $(PARCH)/spectrum/close.c
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/printk.o $(PARCH)/spectrum/printk.c
+
+	$(Z80AS) $(Z80ASFLAGS) -o $(PARCH)/spectrum/crt0.o $(PARCH)/spectrum/crt0.s
+
+	$(Z80AS) $(Z80ASFLAGS) -o $(PARCH)/spectrum/puts_cons.o $(PARCH)/spectrum/puts_cons.s
+	$(Z80AS) $(Z80ASFLAGS) -o $(PARCH)/spectrum/rand.o $(PARCH)/spectrum/rand.s
+	$(Z80AS) $(Z80ASFLAGS) -o $(PARCH)/spectrum/getk.o $(PARCH)/spectrum/getk.s
+	$(Z80AS) $(Z80ASFLAGS) -o $(PARCH)/spectrum/fputc_cons.o $(PARCH)/spectrum/fputc_cons.s
+
+
+	    $(Z80CC) $(Z80CFLAGS) -S -o main.asm test.c
+	$(Z80AS) $(Z80ASFLAGS) -o main.o main.asm
+
+	    $(Z80CC) --code-loc 32768 $(Z80CFLAGS) test.c -o /temp/test.ihx
+
+bla:
+
+		-Wl-l"$(PARCH)/spectrum/crt0.o" \
+		-Wl-l"main.o" -Wl-o,portris_spectrum.bin
+
+
+		-Wl-l, "$(PARCH)/spectrum/conio.o" \
+		-Wl-L, $(PARCH)/spectrum/memmove.o \
+		-Wl-L, $(PARCH)/spectrum/fclose.o \
+		-Wl-L, $(PARCH)/spectrum/open.o \
+		-Wl-L, $(PARCH)/spectrum/ltostr.o \
+		-Wl-L, $(PARCH)/spectrum/vsprintf.o \
+		-Wl-L, $(PARCH)/spectrum/puts_cons.o \
+		-Wl-L, $(PARCH)/spectrum/close.o \
+		-Wl-L, $(PARCH)/spectrum/rand.o \
+		-Wl-L, $(PARCH)/spectrum/getk.o \
+		-Wl-L, $(PARCH)/spectrum/printk.o \
+		-Wl-L, $(PARCH)/spectrum/fputc_cons.o \
+		  -Wl-L, /usr/local/share/sdcc/lib/z80/_strcat.o \
+		   -Wl-L, /usr/local/share/sdcc/lib/z80/_strcpy.o \
+		   -Wl-L, /usr/local/share/sdcc/lib/z80/_strlen.o \
+		   -Wl-L, /usr/local/share/sdcc/lib/z80/_memcpy.o \
+		   -Wl-L, /usr/local/share/sdcc/lib/z80/_memset.o \
+		   -Wl-L, /usr/local/share/sdcc/lib/z80/_modslong.o \
+		   -Wl-L, /usr/local/share/sdcc/lib/z80/_divslong.o \
+		   -Wl-L, /usr/local/share/sdcc/lib/z80/_modulong.o \
+		   -Wl-L, /usr/local/share/sdcc/lib/z80/_divulong.o \
+		   -Wl-L, /usr/local/share/sdcc/lib/z80/_mullong.o \
+		   -Wl-L, /usr/local/share/sdcc/lib/z80/shift.o \
+		   -Wl-L, /usr/local/share/sdcc/lib/z80/mul.o \
+		   -Wl-L, /usr/local/share/sdcc/lib/z80/div.o \
+		   -Wl-L, /usr/local/share/sdcc/lib/z80/stubs.o \
+
+	    makebin < portris_spectrum.ihx > portris_spectrum.bin
+	bin2tap portris_spectrum.bin portris_spectrum.tap 32768
+
+aspectrum: $(SOURCEFILES)
+	 $(Z80CC) $(Z80CFLAGS) -S -o main.asm main.c
+	$(Z80AS) $(Z80ASFLAGS) -o main.o main.asm
+
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/conio.o $(PARCH)/spectrum/conio.c
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/memmove.o $(PARCH)/spectrum/memmove.c
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/fclose.o $(PARCH)/spectrum/fclose.c
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/open.o $(PARCH)/spectrum/open.c
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/ltostr.o $(PARCH)/spectrum/ltostr.c
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/vsprintf.o $(PARCH)/spectrum/vsprintf.c
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/close.o $(PARCH)/spectrum/close.c
+	$(Z80CC) $(Z80CFLAGS) -c -o $(PARCH)/spectrum/printk.o $(PARCH)/spectrum/printk.c
+
+	$(Z80AS) $(Z80ASFLAGS) -o $(PARCH)/spectrum/crt0.o $(PARCH)/spectrum/crt0.s
+
+	$(Z80AS) $(Z80ASFLAGS) -o $(PARCH)/spectrum/puts_cons.o $(PARCH)/spectrum/puts_cons.s
+	$(Z80AS) $(Z80ASFLAGS) -o $(PARCH)/spectrum/rand.o $(PARCH)/spectrum/rand.s
+	$(Z80AS) $(Z80ASFLAGS) -o $(PARCH)/spectrum/getk.o $(PARCH)/spectrum/getk.s
+	$(Z80AS) $(Z80ASFLAGS) -o $(PARCH)/spectrum/fputc_cons.o $(PARCH)/spectrum/fputc_cons.s
+#$(Z80CFLAGS)
+#bla:
+		    $(Z80LD) -- -m -i portris_spectrum.bin \
+		$(PARCH)/spectrum/crt0.o \
+		        main.o \
+		$(PARCH)/spectrum/conio.o \
+		$(PARCH)/spectrum/memmove.o \
+		$(PARCH)/spectrum/fclose.o \
+		$(PARCH)/spectrum/open.o \
+		$(PARCH)/spectrum/ltostr.o \
+		$(PARCH)/spectrum/vsprintf.o \
+		$(PARCH)/spectrum/puts_cons.o \
+		$(PARCH)/spectrum/close.o \
+		$(PARCH)/spectrum/rand.o \
+		$(PARCH)/spectrum/getk.o \
+		$(PARCH)/spectrum/printk.o \
+		$(PARCH)/spectrum/fputc_cons.o \
+			\
+		   /usr/local/share/sdcc/lib/z80/_strcat.o \
+  		   /usr/local/share/sdcc/lib/z80/_strcpy.o \
+  		   /usr/local/share/sdcc/lib/z80/_strlen.o \
+  		   /usr/local/share/sdcc/lib/z80/_memcpy.o \
+  		   /usr/local/share/sdcc/lib/z80/_memset.o \
+		   /usr/local/share/sdcc/lib/z80/_modslong.o \
+		   /usr/local/share/sdcc/lib/z80/_divslong.o \
+		   /usr/local/share/sdcc/lib/z80/_modulong.o \
+		   /usr/local/share/sdcc/lib/z80/_divulong.o \
+		   /usr/local/share/sdcc/lib/z80/_mullong.o \
+		   /usr/local/share/sdcc/lib/z80/shift.o \
+		   /usr/local/share/sdcc/lib/z80/mul.o \
+		   /usr/local/share/sdcc/lib/z80/div.o \
+		   /usr/local/share/sdcc/lib/z80/stubs.o
+
+	    makebin -p < portris_spectrum.ihx > portris_spectrum.bin
+	bin2tap portris_spectrum.bin portris_spectrum.tap 32768
+
+spectrum_z88dk: $(SOURCEFILES)
+	$(Z88DKCC) $(Z88DKCFLAGS) -o portris_spectrum.bin main.c \
+		$(PARCH)/spectrum/conio.c \
+		$(PARCH)/spectrum/memmove.c \
+		$(PARCH)/spectrum/fclose.c \
+		$(PARCH)/spectrum/open.c \
+		$(PARCH)/spectrum/ltostr.c \
+		$(PARCH)/spectrum/vsprintf.c \
+		$(PARCH)/spectrum/puts_cons.asm \
+		$(PARCH)/spectrum/close.c \
+		$(Z80CLIBS)
+
+	@bin2tap portris_spectrum.bin portris_spectrum.tap 32768
+
+#########################################################################################
+# Arm/GCC
+##########################################################################################
+
+.PHONY: gba gp32
+
+gba: $(SOURCEFILES)
+		@echo "gba ..."
+		# -W -Wall
+		@$(ARMCC) -O6 -c -I $(PINC) -I $(PARCH) -I. -D__GBA__ \
+			main.c
+
+		@$(ARMLD) -nostdlib -o portris_gba.elf \
+			-T $(PARCH)/gba/arm-gbabin.x \
+			$(PLIB)/gbastart.o \
+			main.o \
+			/opt/devkitadv/lib/gcc-lib/arm-agb-elf/3.0.2/libgcc.a \
+			-lc -lg -lm -lstdc++ \
+			$(PLIB)/gbaport.a \
+			/opt/devkitadv/lib/gcc-lib/arm-agb-elf/3.0.2/libgcc.a \
+			-lc -lg -lm -lstdc++
+
+		@$(ARMOBJCOPY) -v -O binary portris_gba.elf portris_gba.gba >$(DEVNULL)
+
+gp32: $(SOURCEFILES)
+
+		@echo "gp32 ..."
+		# -W -Wall
+		@$(ARMCC) -O6 -c -I $(PINC) -I $(PARCH) -D__GP32__ \
+			main.c
+
+		@$(ARMLD) -nostdlib -o portris_gp32.elf -T $(PARCH)/gp32/arm-gp32bin.x \
+			$(PLIB)/gp32start.o \
+			main.o \
+			/opt/devkitadv/lib/gcc-lib/arm-agb-elf/3.0.2/libgcc.a \
+			-lc -lg -lm -lstdc++ \
+			$(PLIB)/gp32port.a \
+			/opt/devkitadv/lib/gcc-lib/arm-agb-elf/3.0.2/libgcc.a \
+			-lc -lg -lm -lstdc++
+
+		@$(ARMOBJCOPY) -v -O binary portris_gp32.elf portris_gp32.gxb >$(DEVNULL)
+
+#########################################################################################
+#   gamecube
+#########################################################################################
+
+DEVKITCUBE=/usr/local/devkitcube
+PORTLIBROOT=~/groepaz/libs/portlib_gc
+
+PATH+=:/usr/local/devkitcube/bin
+#PATH+=:~/gamecube/tools
+#export PATH
+
+CC=$(DEVKITCUBE)/bin/powerpc-eabi-elf-gcc
+CCFLAGS=-nostdlib -Wall -W
+CCFLAGS+=-I $(PORTLIBROOT)/include -D__GAMECUBE__
+
+OBJCOPY=$(DEVKITCUBE)/bin/powerpc-eabi-elf-objcopy
+STRIP=$(DEVKITCUBE)/bin/powerpc-eabi-elf-strip
+
+LD=$(DEVKITCUBE)/bin/powerpc-eabi-elf-ld
+LDFLAGS=-T $(PORTLIBROOT)/ldscripts/ppc-ngcbin.x
+
+AS=$(DEVKITCUBE)/bin/powerpc-eabi-elf-as
+AR=$(DEVKITCUBE)/bin/powerpc-eabi-elf-ar
+
+STARTUP=$(PORTLIBROOT)/lib/startup/crt0.o
+
+LIBS= \
+        $(PORTLIBROOT)/lib/libngcport.a \
+        -lc -lnosys
+
+gamecube: $(SOURCEFILES)
+	$(CC) -c $(CCFLAGS) main.c -o main.o
+	$(LD) $(LDFLAGS) -o portris_gc.elf $(STARTUP) main.o $(LIBS)
+	$(STRIP) --remove-section=".comment" --strip-all --strip-debug --strip-unneeded --discard-all --discard-locals portris_gc.elf
+    #strip portris_gc.elf
+	$(OBJCOPY) -O binary portris_gc.elf portris_gc.bin
+
+#########################################################################################
+#   pc
+#########################################################################################
+
+# to make sure the mingw32 compiler is used
+#export PATH=/cygdrive/g/devcpp/bin:$PATH
+BASE=j:/groepaz3
+INCLUDE=$(BASE)/include
+LIB=$(BASE)/lib
+
+MCC=g:/devcpp/bin/gcc
+MCCFLAGS+=-I $(INCLUDE)
+MCCFLAGS+=-L $(LIB)
+
+#MCCFLAGS+=-O2 -Wall -W -D__MINGW32__ -fshort-double -fvtable-thunks -w -fno-exceptions
+MCCFLAGS+=-O2 -Wall -W -fshort-double
+MCCLIBS+=-lgcc -mconsole -lmsvcrt -lmingw32port -lmingw32port-con
+#-D__MINGW32__ // automatically
+
+mingw32: main.c
+	$(MCC) $(MCCFLAGS) main.c $(MCCLIBS) -o portris.exe
+
+#BASE=~/groepaz4
+BASE=~/groepaz/libs/portlib_pc
+INCLUDE=$(BASE)/include
+LIB=$(BASE)/lib
+
+LINCC=gcc
+LINCCFLAGS+=-I $(INCLUDE)
+LINCCFLAGS+=-L $(LIB)
+
+LINCCFLAGS+=-O2 -Wall -W -fshort-double
+LINCCLIBS+=-lgcc -llinuxport -llinuxport-con -lncurses -D__LINUX__
+
+linux: main.c
+	$(LINCC) $(LINCCFLAGS) main.c $(LINCCLIBS) -o portris
+
+
+BASE=/Users/groepaz/groepaz/libs/portlib_pc
+INCLUDE=$(BASE)/include
+LIB=$(BASE)/lib
+
+OSXCC=gcc
+OSXCCFLAGS+=-I$(INCLUDE)
+OSXCCFLAGS+=-L$(LIB)
+
+OSXCCFLAGS+=-O2 -Wall -W -fshort-double
+OSXCCLIBS+=-lgcc -lmacosport -lmacosport-con -lncurses -D__MACOS__
+
+macos: main.c
+	$(OSXCC) $(OSXCCFLAGS) main.c $(OSXCCLIBS) -o portris
+
+
+OSXSDLCCFLAGS+=-I$(INCLUDE) -I/opt/local/include
+OSXSDLCCFLAGS+=-L$(LIB) -L/opt/local/lib
+OSXSDLCCFLAGS+=-O2 -Wall -W -fshort-double
+OSXSDLCCLIBS+= `sdl-config --static-libs`
+OSXSDLCCLIBS+=-lmacosport -lmacosport-gcon -D__MACOS__ -D__SDL__
+
+macos-sdl:
+	$(OSXCC) $(OSXSDLCCFLAGS) main.c $(OSXSDLCCLIBS) -o portris
+
+################################################################################
+		
+rungb: gameboy
+		@xgnuboy --scale=2 portris_gb.gb
+
+runspectrum: spectrum
+#runspectrum: spectrum_z88dk
+		@xspect -quick-load -load-immed portris_spectrum.tap
+
+rungba: gba
+		@VisualBoyAdvance -T 500000 -f 0 -1 -s 9 --ifb-none portris_gba.gba 2> $(DEVNULL)
+
+rungp32: gp32
+		@~/geepee32/geepee32 /EXE=portris_gp32.gxb /RUN > $(DEVNULL)
+
