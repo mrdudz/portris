@@ -39,8 +39,10 @@ perhaps adjust some pathes to the required tools.
 To build the CBM programs, you will need additional tools in your path:
 
 - pucrunch
+  -> http://a1bert.kapsi.fi/Dev/pucrunch/
 - c1541 (from VICE)
 - petcat (from VICE)
+  -> https://sourceforge.net/projects/vice-emu/
 
 To build the PC-Engine image you need
 
@@ -50,10 +52,11 @@ To build the Apple2 and Apple2enh image you need
 
 - Java
 - AppleCommander-ac-1.6.0.jar
+  -> https://github.com/AppleCommander/AppleCommander
 
 To build the gamate image (which doesnt work yet) you will need
 
-- gamate-fixcart
+- gamate-fixcart (included in cc65)
 
 Some things will probably also require a bash shell - this stuff must be found
 and removed/replaced by generic makefile commands.
@@ -94,7 +97,7 @@ cbm610     yes        ok          8           no
 pet        yes        ok          8           no
 geos (c64) yes      conio bugs    4           no
 atari      yes        ok          4           no
-apple2     yes        ?           4 (?)       no (?)
+apple2     yes        ok          4           no       
 atmos      yes        ok          3           no
 nes        yes        ok          3           no
 
@@ -113,6 +116,17 @@ custom/unsupported cc65 targets:
 vic20exp+soft40 yes   ok          4           no
 
 osa65       no (library missing - FIXME)
+
+todo:
+
+atari2600
+atari5200
+creativision
+cx16
+lynx
+osi
+supervision
+telestrat
 
 -----------------------------------------------------
 
