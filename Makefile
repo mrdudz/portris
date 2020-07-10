@@ -1,6 +1,35 @@
 
 .SILENT:
 
+# some magic to handle windows vs linux, shamelessly stolen from olivers makefile
+ifneq ($(shell echo),)
+  CMD_EXE = 1
+endif
+
+ifdef CMD_EXE
+  S = $(subst /,\,/)
+  NOT = - # Hack
+  NULLDEV = nul:
+  MKDIR = mkdir $(subst /,\,$1)
+  RMDIR = -rmdir /s /q $(subst /,\,$1)
+  DEL = del /f $(subst /,\,$1)
+  CP = copy
+else
+  S = /
+  NOT = !
+  NULLDEV = /dev/null
+  MKDIR = mkdir -p $1
+  RMDIR = $(RM) -r $1
+  DEL = $(RM) $1
+  CP = cp
+endif
+
+ifdef QUIET
+  .SILENT:
+  NULLOUT = >$(NULLDEV)
+  NULLERR = 2>$(NULLDEV)
+endif
+
 #CC65HOME=~/Desktop/cc65/github-current/cc65/bin/
 CL65=$(CC65HOME)cl65
 
@@ -20,11 +49,7 @@ ACMD=~/bin/AppleCommander-ac-1.6.0.jar
 GFIX=gamate-fixcart
 
 # generic tools
-CP=cp
 DD=dd
-RM=rm -f
-
-DEVNULL=/dev/null
 
 ##########################################################################################
 
@@ -70,53 +95,53 @@ SOURCEFILES=\
 
 cbmloader: loader.bas
 	@echo "cbm loader..."
-	$(PETCAT) -w2 -l 0401 loader.bas > loader.prg 2> $(DEVNULL)
+	$(PETCAT) -w2 -l 0401 loader.bas > loader.prg $(NULLERR)
 
 cbm: cbmloader $(CBMTARGETS)
 	
 c64: $(SOURCEFILES)
 	@echo "c64..."
 	$(CL65) $(CC65FLAGS) -t c64 -o portris_c64.bin main.c
-	$(PUCRUNCH) -c64 -x2061 portris_c64.bin portris_c64.prg 1> $(DEVNULL) 2> $(DEVNULL)
+	$(PUCRUNCH) -c64 -x2061 portris_c64.bin portris_c64.prg $(NULLOUT) $(NULLERR)
 #	$(EXOMIZER) -q -s 2061 -o portris_c64.prg portris_c64.bin
 
 c6480: $(SOURCEFILES)
 	@echo "c64 + soft80..."
 	$(CL65) $(CC65FLAGS) -o portris_c64_80x25.bin -D__SOFT80__ main.c c64-soft80.o
-	$(PUCRUNCH) -c64 -x2061 portris_c64_80x25.bin portris_c64_80x25.prg 1> $(DEVNULL) 2> $(DEVNULL)
+	$(PUCRUNCH) -c64 -x2061 portris_c64_80x25.bin portris_c64_80x25.prg $(NULLOUT) $(NULLERR)
 #	$(EXOMIZER) -q -s 2061 -o portris_c64_80x25.prg portris_c64_80x25.bin
 
 c6480m: $(SOURCEFILES)
 	@echo "c64 + soft80..."
 	$(CL65) $(CC65FLAGS) -o portris_c64_80x25m.bin -D__SOFT80__ main.c c64-soft80mono.o
-	$(PUCRUNCH) -c64 -x2061 portris_c64_80x25m.bin portris_c64_80x25m.prg 1> $(DEVNULL) 2> $(DEVNULL)
+	$(PUCRUNCH) -c64 -x2061 portris_c64_80x25m.bin portris_c64_80x25m.prg $(NULLOUT) $(NULLERR)
 #	$(EXOMIZER) -q -s 2061 -o portris_c64_80x25m.prg portris_c64_80x25m.bin
 
 c128: $(SOURCEFILES)
 	@echo "c128 ..."
 	$(CL65) $(CC65FLAGS) -t c128 -o portris_c128.bin main.c
-	$(PUCRUNCH) -c128 -x7181 portris_c128.bin portris_c128.prg 1> $(DEVNULL) 2> $(DEVNULL)
+	$(PUCRUNCH) -c128 -x7181 portris_c128.bin portris_c128.prg $(NULLOUT) $(NULLERR)
 
 c128vdc: $(SOURCEFILES)
 	@echo "c128 + vdc..."
 	$(CL65) $(CC65FLAGS) -o portris_c128_vdc.bin -t c128 -D__VDC__ main.c
-	$(PUCRUNCH) -c128 -x7181 portris_c128_vdc.bin portris_c128_vdc.prg 1> $(DEVNULL) 2> $(DEVNULL)
+	$(PUCRUNCH) -c128 -x7181 portris_c128_vdc.bin portris_c128_vdc.prg $(NULLOUT) $(NULLERR)
 
 plus4: $(SOURCEFILES)
 	@echo "plus4 ..."
 	$(CL65) $(CC65FLAGS) -o portris_plus4.bin -t plus4 main.c
-	$(PUCRUNCH) -c16 -x4109 portris_plus4.bin portris_plus4.prg 1> $(DEVNULL) 2> $(DEVNULL)
+	$(PUCRUNCH) -c16 -x4109 portris_plus4.bin portris_plus4.prg $(NULLOUT) $(NULLERR)
 
 c16: $(SOURCEFILES)
 	@echo "c16 ..."
 	$(CL65) $(CC65FLAGS) -o portris_c16.bin -t c16 -C c16-32k.cfg main.c
-	$(PUCRUNCH) -c16 -x4109 portris_c16.bin portris_c16.prg 1> $(DEVNULL) 2> $(DEVNULL)
+	$(PUCRUNCH) -c16 -x4109 portris_c16.bin portris_c16.prg $(NULLOUT) $(NULLERR)
 
 # only works for expanded machines (NOT with default config for vic!)
 vic: $(SOURCEFILES)
 	@echo "vic20 (expanded) ..."
 	$(CL65) $(CC65FLAGS) -o portris_vic20.bin -t vic20 -C vic20-32k.cfg main.c
-	$(PUCRUNCH) -c20 -x4621 portris_vic20.bin portris_vic20.prg 1> $(DEVNULL) 2> $(DEVNULL)
+	$(PUCRUNCH) -c20 -x4621 portris_vic20.bin portris_vic20.prg $(NULLOUT) $(NULLERR)
 	
 # FIXME: needs not yet merged "hard26" hack
 vichacked: $(SOURCEFILES)
@@ -125,7 +150,7 @@ vichacked: $(SOURCEFILES)
 	-C $(PARCH)/vic20/vic20exp.x -D__VIC20HACKED__ main.c \
 		$(PLIB)/vic20hard26port.lib
 
-	$(PUCRUNCH) -c20 -x4621 portris_vic20_26x25.bin portris_vic20_26x25.prg 1> $(DEVNULL) 2> $(DEVNULL)
+	$(PUCRUNCH) -c20 -x4621 portris_vic20_26x25.bin portris_vic20_26x25.prg $(NULLOUT) $(NULLERR)
 
 # FIXME: needs not yet merged "soft40" lib
 vic40: $(SOURCEFILES)
@@ -135,7 +160,7 @@ vic40: $(SOURCEFILES)
 #	$(CL65) $(CC65FLAGS) -o portris_vic20_40x24.bin -t vic20 \
 #	-C $(PARCH)/vic20/soft40/vic20exp.x -D__SOFT40__ main.c \
 #		$(PLIB)/vic20soft40port.lib
-	@$(PUCRUNCH) -c20 -x5645 portris_vic20_40x24.bin portris_vic20_40x24.prg 1> $(DEVNULL) 2> $(DEVNULL)
+	@$(PUCRUNCH) -c20 -x5645 portris_vic20_40x24.bin portris_vic20_40x24.prg $(NULLOUT) $(NULLERR)
 
 
 pet: $(SOURCEFILES)
@@ -177,7 +202,7 @@ cbmdisk: $(CBMTARGETS) cbmloader
 	-write $(JOYDRV)/plus4/drv/joy/plus4-stdjoy.joy plus4-stdjoy.joy \
 	-write $(JOYDRV)/vic20/drv/joy/vic20-stdjoy.joy vic20-stdjoy.joy \
 	-write $(JOYDRV)/vic20/drv/joy/vic20-ptvjoy.joy vic20-ptvjoy.joy \
-	> $(DEVNULL)
+	$(NULLOUT)
 
 portris_geos.cvt: $(SOURCEFILES) portrisres.grc
 	@echo "geos ..."
@@ -188,7 +213,7 @@ geos: portris_geos.cvt
 geosdisk: geos
 	@echo "geosdisk ..."
 	$(CP) geos.d64.bak geos.d64
-#	$(C1541) -attach geos.d64 -write portris_geos.cvt portris.cvt > $(DEVNULL)
+#	$(C1541) -attach geos.d64 -write portris_geos.cvt portris.cvt $(NULLOUT)
 	$(C1541) -attach geos.d64 -geoswrite portris_geos.cvt
 
 #
@@ -199,13 +224,19 @@ apple2: $(SOURCEFILES)
 	@echo "apple2 ..."
 	$(CL65) $(CL65FLAGS) -o portris_apple2.xex -t apple2 -C apple2-system.cfg main.c
 	$(CP) ProDOS_2_4_2.dsk portris_apple2.dsk
-	java -jar $(ACMD) -p portris_apple2.dsk portris.system sys < portris_apple2.xex
-
+#	java -jar $(ACMD) -p portris_apple2.dsk portris.system sys < portris_apple2.xex
+	java -jar $(ACMD) -p portris_apple2.dsk portris.system sys < $(shell cl65 --print-target-path)/apple2/util/loader.system
+	java -jar $(ACMD) -as portris_apple2.dsk portris       bin < portris_apple2.xex
+	
+	
 apple2e: $(SOURCEFILES)
 	@echo "apple2e ..."
 	$(CL65) $(CL65FLAGS) -o portris_apple2e.xex -t apple2enh -C apple2-system.cfg main.c
 	$(CP) ProDOS_2_4_2.dsk portris_apple2e.dsk
-	java -jar $(ACMD) -p portris_apple2e.dsk portris.system sys < portris_apple2e.xex
+#	java -jar $(ACMD) -p portris_apple2e.dsk portris.system sys < portris_apple2e.xex
+	java -jar $(ACMD) -p portris_apple2e.dsk portris.system sys < $(shell cl65 --print-target-path)/apple2/util/loader.system
+	java -jar $(ACMD) -as portris_apple2e.dsk portris       bin < portris_apple2e.xex
+
 #
 #	atari machines
 #
@@ -257,74 +288,74 @@ lunix: $(SOURCEFILES)
 .PHONY: clean nice
 
 clean:
-	$(RM) portris.exe
-	$(RM) portris
-	$(RM) portris*.idb
-	$(RM) portris*.prg
-	$(RM) portris*.gb
-	$(RM) portris*.gba
-	$(RM) loader.prg
-	$(RM) portris*.cvt
-	$(RM) portris*.xex
-	$(RM) portris*.bin
-	$(RM) portris*.nes
-	$(RM) portris*.pce
-	$(RM) portris*.sav
-	$(RM) portris*.mem
-	$(RM) portris*.rst
-	$(RM) portris*.ihx
-	$(RM) ang-c++.ihx
-	$(RM) debug.log
-	$(RM) portris*.lnk
-	$(RM) portris*.elf
-	$(RM) portris*.gxb
-	$(RM) gbz80.lib
-	$(RM) *.TAP
-	$(RM) *.tap
-	$(RM) *.s
-	$(RM) *.asm
-	$(RM) *.rel
-	$(RM) *.sym
-	$(RM) *.joy
-	$(RM) *.lnk
-	$(RM) *.pre
-	$(RM) *.cfg
-	$(RM) *.def
-	$(RM) pass1
-	$(RM) pass2
-	$(RM) pass3
-	$(RM) pass4
-	$(RM) pass5
-	$(RM) *.o
-	$(RM) *.lst
-	$(RM) *.map
-	$(RM) *.d64
-	$(RM) portris*.dsk
+	$(DEL) portris.exe
+	$(DEL) portris
+	$(DEL) portris*.idb
+	$(DEL) portris*.prg
+	$(DEL) portris*.gb
+	$(DEL) portris*.gba
+	$(DEL) loader.prg
+	$(DEL) portris*.cvt
+	$(DEL) portris*.xex
+	$(DEL) portris*.bin
+	$(DEL) portris*.nes
+	$(DEL) portris*.pce
+	$(DEL) portris*.sav
+	$(DEL) portris*.mem
+	$(DEL) portris*.rst
+	$(DEL) portris*.ihx
+	$(DEL) ang-c++.ihx
+	$(DEL) debug.log
+	$(DEL) portris*.lnk
+	$(DEL) portris*.elf
+	$(DEL) portris*.gxb
+	$(DEL) gbz80.lib
+	$(DEL) *.TAP
+	$(DEL) *.tap
+	$(DEL) *.s
+	$(DEL) *.asm
+	$(DEL) *.rel
+	$(DEL) *.sym
+	$(DEL) *.joy
+	$(DEL) *.lnk
+	$(DEL) *.pre
+	$(DEL) *.cfg
+	$(DEL) *.def
+	$(DEL) pass1
+	$(DEL) pass2
+	$(DEL) pass3
+	$(DEL) pass4
+	$(DEL) pass5
+	$(DEL) *.o
+	$(DEL) *.lst
+	$(DEL) *.map
+	$(DEL) *.d64
+	$(DEL) portris*.dsk
 
 nice:
-	$(RM) portris*.prg
-	$(RM) loader.prg
-	$(RM) portris*.bin
-	$(RM) portris*.srm
-	$(RM) portris*.sav
-	$(RM) portris*.elf
-	$(RM) *.s
-	$(RM) *.asm
-	$(RM) *.rel
-	$(RM) *.sym
-	$(RM) *.joy
-	$(RM) *.lnk
-	$(RM) *.pre
-	$(RM) *.cfg
-	$(RM) *.def
-	$(RM) pass1
-	$(RM) pass2
-	$(RM) pass3
-	$(RM) pass4
-	$(RM) pass5
-	$(RM) *.o
-	$(RM) *.lst
-	$(RM) *.map
+	$(DEL) portris*.prg
+	$(DEL) loader.prg
+	$(DEL) portris*.bin
+	$(DEL) portris*.srm
+	$(DEL) portris*.sav
+	$(DEL) portris*.elf
+	$(DEL) *.s
+	$(DEL) *.asm
+	$(DEL) *.rel
+	$(DEL) *.sym
+	$(DEL) *.joy
+	$(DEL) *.lnk
+	$(DEL) *.pre
+	$(DEL) *.cfg
+	$(DEL) *.def
+	$(DEL) pass1
+	$(DEL) pass2
+	$(DEL) pass3
+	$(DEL) pass4
+	$(DEL) pass5
+	$(DEL) *.o
+	$(DEL) *.lst
+	$(DEL) *.map
 
 #########################################################################################
 #   some stuff for lazy peeps like me :o)
@@ -337,54 +368,54 @@ runc64: c64
 	-write $(JOYDRV)/c64/drv/joy/c64-hitjoy.joy c64-hitjoy.joy \
 	-write $(JOYDRV)/c64/drv/joy/c64-numpad.joy c64-numpad.joy \
 	 > $(DEVNULL)
-	x64sc --autostart portris.d64 > $(DEVNULL)
-#	x64sc --autostart portris_c64.prg > $(DEVNULL)
-#	x64sc -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+	x64sc --autostart portris.d64
+#	x64sc --autostart portris_c64.prg
+#	x64sc -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83
 
 runc6480: c6480
-#	x64sc --autostart portris_c64_80x25.prg #> $(DEVNULL)
-	x64sc -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+#	x64sc --autostart portris_c64_80x25.prg
+	x64sc -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83
 rungeos: geos geosdisk
-	x64sc --autostart geos.d64 > $(DEVNULL)
+	x64sc --autostart geos.d64
 
 runc128: c128
 #	x128 --autostart portris_c128.prg > $(DEVNULL)
-	x128 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+	x128 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83
 runc128vdc: c128vdc
 #	x128 -8 portris.d64 --autostart portris_c128_vdc.prg > $(DEVNULL)
-	x128 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+	x128 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83
 
 runpet: pet
-#	xpet --autostart portris_pet.prg #> $(DEVNULL)
-#	xpet -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
-	xpet +truedrive -virtualdev --autostart portris.d64 > $(DEVNULL)
+#	xpet --autostart portris_pet.prg
+#	xpet -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83
+	xpet +truedrive -virtualdev --autostart portris.d64
 
 runvic20: vic
 #	xvic --autostart portris_vic20.prg > $(DEVNULL)
-	$(C1541) -format portris,00 d64 portris.d64 -write portris_vic20.prg portris-vic20 > $(DEVNULL)
-	xvic -memory all -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+	$(C1541) -format portris,00 d64 portris.d64 -write portris_vic20.prg portris-vic20
+	xvic -memory all -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83
 runvichacked: vichacked
-#	xvic --autostart portris_vic20_26x25.prg > $(DEVNULL)
-	xvic -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+#	xvic --autostart portris_vic20_26x25.prg
+	xvic -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83
 runvic40: vic40
-#	xvic --autostart portris_vic20_40x24.prg > $(DEVNULL)
-	xvic -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+#	xvic --autostart portris_vic20_40x24.prg
+	xvic -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83
 
 runc16: c16
-#	xplus4 --autostart portris_c16.prg > $(DEVNULL)
-	xplus4 -model c232 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+#	xplus4 --autostart portris_c16.prg
+	xplus4 -model c232 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83
 runplus4: plus4
-#	xplus4 --autostart portris_plus4.prg > $(DEVNULL)
-	xplus4 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+#	xplus4 --autostart portris_plus4.prg
+	xplus4 -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83
 runcbm510: cbm510
-#	xcbm2 -model 510 --autostart portris_cbm510.prg > $(DEVNULL)
-	xcbm5x0 +truedrive -virtualdev -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+#	xcbm2 -model 510 --autostart portris_cbm510.prg
+	xcbm5x0 +truedrive -virtualdev -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83
 runcbm610: cbm610
-#	xcbm2 -model 610 --autostart portris_cbm610.prg > $(DEVNULL)
-	xcbm2 +truedrive -virtualdev -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83 > $(DEVNULL)
+#	xcbm2 -model 610 --autostart portris_cbm610.prg
+	xcbm2 +truedrive -virtualdev -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83
 
 runatari: atari
-	atari800 -windowed -run portris_atari.xex > $(DEVNULL)
+	atari800 -windowed -run portris_atari.xex
 	xset r on
 
 runnes: nes
@@ -402,10 +433,10 @@ runpce: pcengine
 #	xyame -f 0 portris_pcengine.pce; xset r on
 	mednafen -force_module pce portris_pcengine.pce
 
-# FIXME
 runapple2: apple2
-	linapple --d1 portris_apple2.dsk --autoboot
+#	linapple --d1 portris_apple2.dsk --autoboot
+	wine ~/Desktop/AppleWin1.29.13.0/Applewin.exe -d1 portris_apple2.dsk
 
-# FIXME
 runapple2e: apple2e
-	linapple --d1 portris_apple2e.dsk --autoboot
+#	linapple --d1 portris_apple2e.dsk --autoboot
+	wine ~/Desktop/AppleWin1.29.13.0/Applewin.exe -d1 portris_apple2e.dsk
