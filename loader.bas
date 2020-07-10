@@ -31,10 +31,11 @@
 400 rem *** c64
 410 print "c64"
 411 de=peek(186)
-420 print:print"select:":print"1) 40cols":print"2) 80cols"
-422 poke198,0:wait198,1:get a$:if a$="2" then l$=l$+"c64-80x25":goto 350
-423 if a$<>"1" then 422
-424 l$=l$+"c64":goto 350
+420 print:print"select:":print"1) 40cols":print"2) 80cols":print"3) 80cols (mono)"
+422 poke198,0:wait198,1:get a$:if a$="2" then l$=l$+"c64-80":goto 350
+423 if a$="3" then l$=l$+"c64-80m":goto 350
+424 if a$<>"1" then 422
+425 l$=l$+"c64":goto 350
 
 500 rem *** c128
 510 mo=peek(215):rem 40 or 80 columns
