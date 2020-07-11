@@ -85,7 +85,10 @@ void title_printstring (unsigned char aaline, unsigned char nr, signed char off)
 
 void title_printcontroller(unsigned char type)
 {
-unsigned char i,ii,l,c,j;
+unsigned char i,ii,l;
+#if !defined (NOKEYBOARD)
+unsigned char c,j;
+#endif
 
     gotoxy(0,TOFFS6);cclear(SCREENX);
     gotoxy(0,TOFFS6+1);cclear(SCREENX);
@@ -197,7 +200,7 @@ unsigned char c;
     #if SCREENX > 23
     cprintf("v%s ",VERSION);
 #if !defined(NOTVMODE)
-    if(get_tv()==TV_NTSC) {
+    if(get_tv() == TV_NTSC) {
         cputs("(ntsc)");
     } else {
         cputs("(pal)");
@@ -208,7 +211,7 @@ unsigned char c;
 
     cprintf("v%s",VERSION);
 #if !defined(NOTVMODE)
-    if(get_tv()==TV_NTSC) {
+    if(get_tv() == TV_NTSC) {
         cputs("(ntsc)");
     } else {
         cputs("(pal)");
@@ -218,9 +221,6 @@ unsigned char c;
 
     #endif
 
-
-//conio_update();
-//return;    
 
 
     textcolor(COLOR_WHITE);
@@ -362,6 +362,7 @@ unsigned char c;
 
     }
 
+    return ' '; /* this should never happen */
 }
 
 #endif

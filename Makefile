@@ -99,7 +99,7 @@ c6480: $(SOURCEFILES)
 	$(PUCRUNCH) -c64 -x2061 portris_c64_80x25.bin portris_c64_80x25.prg $(NULLOUT) $(NULLERR)
 
 c6480m: $(SOURCEFILES)
-	@echo "c64 + soft80..."
+	@echo "c64 + soft80 (mono)..."
 	$(CL65) $(CC65FLAGS) -o portris_c64_80x25m.bin -D__SOFT80__ main.c c64-soft80mono.o
 	$(PUCRUNCH) -c64 -x2061 portris_c64_80x25m.bin portris_c64_80x25m.prg $(NULLOUT) $(NULLERR)
 
@@ -124,7 +124,7 @@ c16: $(SOURCEFILES)
 	$(PUCRUNCH) -c16 -x4109 portris_c16.bin portris_c16.prg $(NULLOUT) $(NULLERR)
 
 c16exp: $(SOURCEFILES)
-	@echo "c16exp ..."
+	@echo "c16 (expanded) ..."
 	$(CL65) $(CC65FLAGS) -o portris_c16exp.bin -D__C16EXP__ -t c16 -C c16-32k.cfg main.c
 	$(PUCRUNCH) -c16 -x4109 portris_c16exp.bin portris_c16exp.prg $(NULLOUT) $(NULLERR)
 	

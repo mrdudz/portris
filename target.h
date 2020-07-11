@@ -104,13 +104,13 @@ hiscore screen
 #  define SCREENX	  40
 #  define SCREENY	  25
 
-/* FIXME: file too large */
 #elif defined(__C16__) && defined(__C16EXP__)
 #  define SCREENX	  40
 #  define SCREENY	  25
 #  define NOKBREPEAT           // FIXME: missing in cc65 lib
 #  define NOWAITVBLANK         // FIXME: missing in cc65 lib
 
+/* FIXME: file too large */
 #elif defined(__C16__)
 #  define SCREENX	  40
 #  define SCREENY	  25
@@ -326,7 +326,8 @@ hiscore screen
 #define NOHISCORES
 #define NOTITLESCREEN
 
-/* misc targets */
+///////////////////////////////////////////////////////////////////////////////
+// misc other targets
 
 #elif defined(__GAMEBOY__)
 #  define SCREENX	  (160/8)
@@ -553,3 +554,6 @@ hiscore screen
 #error "Unknown target system - FIXME!"
 #endif
 
+#if defined (NOJOYSTICKS) && defined (NOKEYBOARD)
+#warning "neither joystick nor keyboard input is enabled"
+#endif

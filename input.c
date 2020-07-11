@@ -137,9 +137,9 @@ const unsigned char joykeys[8*4]=
 #    endif
 #endif
 
+#if !defined (NOKEYBOARD)
 unsigned char poll_key(unsigned char n)
 {
-#if !defined (NOKEYBOARD)
 const unsigned char *keys;
 
     keys=&GET2DIM(joykeys,n,0,4);
@@ -167,10 +167,8 @@ const unsigned char *keys;
     {
         return(0);
     }
-#else
-        return(0);
-#endif
 }
+#endif
 
 #if !defined (NOJOYSTICKS)
 // read state of a controller
@@ -239,7 +237,9 @@ unsigned char j;
 
 void flushkeys(void)
 {
+#if !defined (NOJOYSTICKS)
 unsigned char i,ii;
+#endif
 
     #if !defined (NOKEYBOARD)
     // eat any remaining chars in keyboard buffer

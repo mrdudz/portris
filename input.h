@@ -18,7 +18,11 @@ extern const unsigned char joykeys[8][4];
 extern const unsigned char joykeys[8*4];
 #endif
 
+#if !defined (NOKEYBOARD)
 unsigned char poll_key(unsigned char n);
+#else
+#define poll_key(x) 0
+#endif
 
 void init_joy(void);
 #if !defined (NOJOYSTICKS)
