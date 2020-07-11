@@ -1,7 +1,12 @@
 Makefile.config.local
 main.o
-portlib_atmos.tap
-portris_apple2.xex
+portris_atmos.tap
+portris_apple2.bin
+portris_apple2.sys
+portris_apple2.dsk
+portris_apple2enh.bin
+portris_apple2enh.sys
+portris_apple2enh.dsk
 portris_atari.xex
 portris_c128.bin
 portris_c128.prg
@@ -26,9 +31,6 @@ portris_plus4.bin
 portris_plus4.prg
 portris_vic20.bin
 portris_vic20.prg
-portris_apple2.dsk
-portris_apple2enh.dsk
-portris_apple2enh.xex
 loader.prg
 geos.d64
 portris.d64

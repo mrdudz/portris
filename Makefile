@@ -44,7 +44,7 @@ JOYDRV := $(shell $(CL65) --print-target-path)
 # generic tools
 DD=dd
 
-##########################################################################################
+###############################################################################
 
 .PHONY: all clean nice targets cc65
 
@@ -56,7 +56,7 @@ CC65TARGETS+=$(CBMTARGETS) cbmloader cbmdisk geosdisk
 
 help:
 	@echo available targets are:
-	@echo all clean nice cbm cc65 $(CC65TARGETS)
+	@echo all clean cbm cc65 $(CC65TARGETS)
 	@echo look in the makefile for more.
 
 all: clean targets nice
@@ -80,9 +80,7 @@ SOURCEFILES=\
 	title.c \
 	title.h
 
-##########################################################################################
-#	6502/cc65
-##########################################################################################
+###############################################################################
 
 .PHONY: cbmloader c64 c128 c128vdc plus4 c16 vic20 cbm510 cbm610 pet atari apple2 apple2enh geos geosdic cbmdisk
 
@@ -206,36 +204,33 @@ geosdisk: geos
 #	$(C1541) -attach geos.d64 -write portris_geos.cvt portris.cvt $(NULLOUT)
 	$(C1541) -attach geos.d64 -geoswrite portris_geos.cvt
 
-#
-#	apple machines
-#
-
 apple2: $(SOURCEFILES)
 	@echo "apple2 ..."
-	$(CL65) $(CL65FLAGS) -o portris_apple2.xex -t apple2 -C apple2-system.cfg main.c
+# smaller programs
+#	$(CL65) $(CL65FLAGS) -o portris_apple2.sys -t apple2 -C apple2-system.cfg main.c
+#	$(CP) ProDOS_2_4_2.dsk portris_apple2.dsk
+#	java -jar $(ACMD) -as portris_apple2.dsk portris.system sys < portris_apple2.sys
+# larger programs
+	$(CL65) $(CL65FLAGS) -o portris_apple2.bin -t apple2 main.c
 	$(CP) ProDOS_2_4_2.dsk portris_apple2.dsk
-#	java -jar $(ACMD) -p portris_apple2.dsk portris.system sys < portris_apple2.xex
 	java -jar $(ACMD) -p portris_apple2.dsk portris.system sys < $(shell cl65 --print-target-path)/apple2/util/loader.system
-	java -jar $(ACMD) -as portris_apple2.dsk portris       bin < portris_apple2.xex
-	
+	java -jar $(ACMD) -as portris_apple2.dsk portris       bin < portris_apple2.bin
+
 apple2enh: $(SOURCEFILES)
 	@echo "apple2enh ..."
-	$(CL65) $(CL65FLAGS) -o portris_apple2enh.xex -t apple2enh -C apple2-system.cfg main.c
+# smaller programs
+#	$(CL65) $(CL65FLAGS) -o portris_apple2enh.sys -t apple2enh -C apple2-system.cfg main.c
+#	$(CP) ProDOS_2_4_2.dsk portris_apple2enh.dsk
+#	java -jar $(ACMD) -as portris_apple2enh.dsk portris.system sys < portris_apple2enh.sys
+# larger programs
+	$(CL65) $(CL65FLAGS) -o portris_apple2enh.bin -t apple2enh main.c
 	$(CP) ProDOS_2_4_2.dsk portris_apple2enh.dsk
-#	java -jar $(ACMD) -p portris_apple2enh.dsk portris.system sys < portris_apple2enh.xex
 	java -jar $(ACMD) -p portris_apple2enh.dsk portris.system sys < $(shell cl65 --print-target-path)/apple2/util/loader.system
-	java -jar $(ACMD) -as portris_apple2enh.dsk portris       bin < portris_apple2enh.xex
-
-#
-#	atari machines
-#
+	java -jar $(ACMD) -as portris_apple2enh.dsk portris       bin < portris_apple2enh.bin
 
 atari: $(SOURCEFILES)
 	@echo "atari800 ..."
 	$(CL65) $(CL65FLAGS) -o portris_atari.xex -t atari main.c
-#
-#	other machines or operating systems
-#
 
 .PHONY: nes osa65 atmos pcengine gamate
 
@@ -252,8 +247,8 @@ pcengine: $(SOURCEFILES)
 
 atmos: $(SOURCEFILES)
 	@echo "atmos ..."
-	$(CL65) $(CL65FLAGS) -o portlib_atmos.tap -t atmos main.c
-#	-oric.header atmos.prg portlib_atmos.tap --quiet-autostart
+	$(CL65) $(CL65FLAGS) -o portris_atmos.tap -t atmos main.c
+#	-oric.header atmos.prg portris_atmos.tap --quiet-autostart
 
 # FIXME: file too large
 gamate: $(SOURCEFILES)
@@ -271,19 +266,14 @@ lunix: $(SOURCEFILES)
 	$(CL65) $(CCFLAGS) -o portris_lunix.prg -t lunix main.c
 
 #########################################################################################
-#   cleanup etc
+#   cleanup
 #########################################################################################
 
-.PHONY: clean nice
+.PHONY: clean
 
 clean:
-	$(DEL) portris.exe
-	$(DEL) portris
-	$(DEL) portris*.idb
-	$(DEL) portris*.prg
-	$(DEL) portris*.gb
-	$(DEL) portris*.gba
 	$(DEL) loader.prg
+	$(DEL) portris*.prg
 	$(DEL) portris*.cvt
 	$(DEL) portris*.xex
 	$(DEL) portris*.bin
@@ -293,58 +283,16 @@ clean:
 	$(DEL) portris*.mem
 	$(DEL) portris*.rst
 	$(DEL) portris*.ihx
-	$(DEL) ang-c++.ihx
-	$(DEL) debug.log
+	$(DEL) portris*.sys
 	$(DEL) portris*.lnk
 	$(DEL) portris*.elf
 	$(DEL) portris*.gxb
-	$(DEL) gbz80.lib
-	$(DEL) *.TAP
-	$(DEL) *.tap
-	$(DEL) *.s
-	$(DEL) *.asm
-	$(DEL) *.rel
-	$(DEL) *.sym
-	$(DEL) *.joy
-	$(DEL) *.lnk
-	$(DEL) *.pre
-	$(DEL) *.cfg
-	$(DEL) *.def
-	$(DEL) pass1
-	$(DEL) pass2
-	$(DEL) pass3
-	$(DEL) pass4
-	$(DEL) pass5
+	$(DEL) portris*.tap
 	$(DEL) *.o
 	$(DEL) *.lst
 	$(DEL) *.map
 	$(DEL) *.d64
 	$(DEL) portris*.dsk
-
-nice:
-	$(DEL) portris*.prg
-	$(DEL) loader.prg
-	$(DEL) portris*.bin
-	$(DEL) portris*.srm
-	$(DEL) portris*.sav
-	$(DEL) portris*.elf
-	$(DEL) *.s
-	$(DEL) *.asm
-	$(DEL) *.rel
-	$(DEL) *.sym
-	$(DEL) *.joy
-	$(DEL) *.lnk
-	$(DEL) *.pre
-	$(DEL) *.cfg
-	$(DEL) *.def
-	$(DEL) pass1
-	$(DEL) pass2
-	$(DEL) pass3
-	$(DEL) pass4
-	$(DEL) pass5
-	$(DEL) *.o
-	$(DEL) *.lst
-	$(DEL) *.map
 
 #########################################################################################
 #   some stuff for lazy peeps like me :o)
@@ -414,7 +362,7 @@ runnes: nes
 # FIXME
 runatmos: atmos
 #	xeuphoric -z 2; xset r on;rm printer.out
-	CWD=`pwd`; cd ~/Desktop/oricutron-master/ && ./oricutron -m atmos -t $$CWD/portlib_atmos.tap
+	CWD=`pwd`; cd ~/Desktop/oricutron-master/ && ./oricutron -m atmos -t $$CWD/portris_atmos.tap
 
 runpce: pcengine
 	$(PCEEMU) portris_pcengine.pce
