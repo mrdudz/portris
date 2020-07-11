@@ -33,8 +33,10 @@ your eyes with gasoline after looking at it. Don't say i didn't warn you :)
 To build, type "make cc65". Just typing "make" will show a list of targets you
 can use (some of which will not work, i guess).
 
-You also have to edit the CC65HOME at the top of the Makefile eventually, and
-perhaps adjust some pathes to the required tools.
+A bunch of external tools are expected in your path. Alternatively you can
+override them by giving the respective variables on the commandline or your
+environment (see Makefile.config). You can also make a copy of Makefile.config
+named Makefile.config.local and do your changes there.
 
 To build the CBM programs, you will need additional tools in your path:
 
