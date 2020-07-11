@@ -3,5 +3,5 @@
 HEADER APPLICATION "Portris" "Portris" "V0.5" {
 dostype USR
 author "Groepaz/The Solution"
-info "This is a game similar to Tetros"
+info "This is a game similar to Tetris"
 }
