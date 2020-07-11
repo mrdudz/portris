@@ -5,7 +5,7 @@ else
 include Makefile.config.local
 endif
 
-.SILENT:
+#.SILENT:
 
 # some magic to handle windows vs linux, shamelessly stolen from olivers makefile
 ifneq ($(shell echo),)
@@ -48,8 +48,8 @@ DD=dd
 
 .PHONY: all clean nice targets cc65
 
-CBMTARGETS=c64 c6480 c6480m c128 c128vdc pet plus4 cbm510 cbm610 vic c16 geos
-#vichacked vic40 gamate
+CBMTARGETS=c64 c6480 c6480m c128 c128vdc pet plus4 cbm510 cbm610 vic c16exp geos
+#vichacked vic40 gamate c16
 
 CC65TARGETS=apple2 apple2enh atari nes pcengine atmos
 CC65TARGETS+=$(CBMTARGETS) cbmloader cbmdisk geosdisk
@@ -122,9 +122,14 @@ plus4: $(SOURCEFILES)
 
 c16: $(SOURCEFILES)
 	@echo "c16 ..."
-	$(CL65) $(CC65FLAGS) -o portris_c16.bin -t c16 -C c16-32k.cfg main.c
+	$(CL65) $(CC65FLAGS) -o portris_c16.bin -t c16 main.c
 	$(PUCRUNCH) -c16 -x4109 portris_c16.bin portris_c16.prg $(NULLOUT) $(NULLERR)
 
+c16exp: $(SOURCEFILES)
+	@echo "c16exp ..."
+	$(CL65) $(CC65FLAGS) -o portris_c16exp.bin -D__C16EXP__ -t c16 -C c16-32k.cfg main.c
+	$(PUCRUNCH) -c16 -x4109 portris_c16exp.bin portris_c16exp.prg $(NULLOUT) $(NULLERR)
+	
 # only works for expanded machines (NOT with default config for vic!)
 vic: $(SOURCEFILES)
 	@echo "vic20 (expanded) ..."
@@ -190,8 +195,8 @@ cbmdisk: $(CBMTARGETS) cbmloader
 	-write $(JOYDRV)/plus4/drv/joy/plus4-stdjoy.joy plus4-stdjoy.joy \
 	-write $(JOYDRV)/vic20/drv/joy/vic20-stdjoy.joy vic20-stdjoy.joy \
 	-write $(JOYDRV)/vic20/drv/joy/vic20-ptvjoy.joy vic20-ptvjoy.joy \
-	$(NULLOUT)
-	
+	-list $(NULLOUT)
+
 portris_geos.cvt: $(SOURCEFILES) portrisres.grc
 	@echo "geos ..."
 	$(CL65) $(CL65FLAGS) -t geos -o portris_geos.cvt portrisres.grc main.c
@@ -304,7 +309,7 @@ runc64: c64
 	-write $(JOYDRV)/c64/drv/joy/c64-ptvjoy.joy c64-ptvjoy.joy \
 	-write $(JOYDRV)/c64/drv/joy/c64-hitjoy.joy c64-hitjoy.joy \
 	-write $(JOYDRV)/c64/drv/joy/c64-numpad.joy c64-numpad.joy \
-	 > $(DEVNULL)
+	$(NULLOUT)
 	$(X64SC) --autostart portris.d64
 #	$(X64SC) --autostart portris_c64.prg
 #	$(X64SC) -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83

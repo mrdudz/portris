@@ -92,7 +92,7 @@ cc65 standard targets:
 c64        yes        ok          4           yes
 c128       yes        ok          4           yes
 c128 vdc   yes        ok          8           yes
-c16        yes        ok          4           yes
+c16 32k    yes        ok          4           yes
 plus4      yes        ok          4           yes
 cbm510     yes        ok          4           yes
 cbm610     yes        ok          8           no
@@ -100,6 +100,7 @@ pet        yes        ok          8           no
 geos (c64) yes      conio bugs    4           no
 atari      yes        ok          4           no
 apple2     yes        ok          4           no       
+apple2enh  yes        ok          4           no       
 atmos      yes        ok          3           no
 nes        yes        ok          3           no
 
@@ -110,6 +111,7 @@ vic20exp   yes        ok          2           yes
 lunix       no (library missing - FIXME)
 bbc         no (library missing - FIXME)
 
+c16         no (program too large)
 vic20       no (program too large)
 gamate      no (program too large)
 

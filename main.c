@@ -1104,12 +1104,6 @@ PLAYFIELD *p;
     Main Loop
 ***********************************************************************************/
 
-//#include <heap.h>
-
-
-//void cprintf(char *format,...);
-//extern void cprintf(char *,...);
-
 #ifdef __SDL__
 int main(int argc, char *argv[])
 #else
@@ -1117,205 +1111,33 @@ int main(void)
 #endif
 {
 unsigned char finished=0;
-//unsigned char i;
 
-    // KLUDGES: switch to VDC screen
-    #if defined (__VDC__)
+#if defined (__C128__)
+#if defined (__VDC__)
 unsigned char oldvideomode;
-//         puts("switching to VDC...\n\r");
-//         puts("\x1bx"); // send ESC-x to stdout (switch to VDC screen)
-//         puts("\x0e"); // send asc 14 to stdout (toggle lowercase, workaround for buggy conio)
-//         *((unsigned char*)0xf8)=0xff; // disable all scrolling (workaround for buggy conio)
-        oldvideomode = videomode(VIDEOMODE_80COL);
-    #endif
+    oldvideomode = videomode(VIDEOMODE_80COL);
+#else
+    oldvideomode = videomode(VIDEOMODE_40COL);
+#endif
+#endif
 
-    #if defined(GFXCONIOINIT)
-        gfx_conio_init();
-    #endif
+#if defined(GFXCONIOINIT)
+    gfx_conio_init();
+#endif
 
-    #if defined(__GAMECUBE__)
+#if defined(__GAMECUBE__)
     VIInit();
     PADInit();
-    #endif
+#endif
 
-    #if defined(CONIOINIT)
+#if defined(CONIOINIT)
     conio_init();
-    #endif
+#endif
 
-    #if defined(__GAMECUBE__) | defined(__PSP__)
+#if defined(__GAMECUBE__) | defined(__PSP__)
     conio_foreground();
     conio_disable_backscroll();
-    #endif
-
-//     while(1)
-// {
-// }
-#if 0
-     clrscr();
-//    printk("123456789012345678901234567890123456789012345678901234567890");
-  //printf ("%c[1mBold Text\n",27);
-  //printf ("%c[2mDim text\n",27);
-  for(i=0;i<15;i++)
-  {
-      //gotoxy(i,i);printf("%d",i);
-   //  printk("%c%c%c%d",22,32+(23-i),32+(36-i),i);
-     gotoxy(1,i);textcolor(i);cprintf("color %d",i);
- }
-while(1)
-{
-}
-  //title();
-while(1)
-{
-}
 #endif
-    #if 0
-    {
-    conio_init();
-    clrscr();
-
-while(1)
-{
-    extern unsigned  _BSS_LOAD__,_BSS_RUN__,_BSS_SIZE__;
-    extern unsigned  _DATA_LOAD__,_DATA_RUN__,_DATA_SIZE__;
-    extern unsigned  _RODATA_LOAD__,_RODATA_RUN__,_RODATA_SIZE__;
-    extern unsigned  _CODE_LOAD__,_CODE_RUN__,_CODE_SIZE__;
-    extern unsigned  _STARTUP_LOAD__,_STARTUP_RUN__,_STARTUP_SIZE__;
-    extern unsigned  _VECTORS_LOAD__,_VECTORS_RUN__,_VECTORS_SIZE__;
-    extern unsigned  _ZEROPAGE_LOAD__,_ZEROPAGE_RUN__,_ZEROPAGE_SIZE__;
-
-    //int a=0x1234;
-
-    gotoxy(0,0);
-    textcolor(1);bgcolor(9);
-//    cputs("does it work?");
-    //cprintf("trallalala");
-
-//    gotoxy(3,3);cputs("1la");
-//    gotoxy(4,6);cputs("2la");
-//    gotoxy(5,7);cputs("3la");
-
-
-    cprintf("code     load:%04x run:%04x size:%04x\n\r",&_CODE_LOAD__,&_CODE_RUN__,&_CODE_SIZE__);
-    cprintf("startup  load:%04x run:%04x size:%04x\n\r",&_STARTUP_LOAD__,&_STARTUP_RUN__,&_STARTUP_SIZE__);
-    cprintf("vectors  load:%04x run:%04x size:%04x\n\r",&_VECTORS_LOAD__,&_VECTORS_RUN__,&_VECTORS_SIZE__);
-    cprintf("zeropage load:%04x run:%04x size:%04x\n\r",&_ZEROPAGE_LOAD__,&_ZEROPAGE_RUN__,&_ZEROPAGE_SIZE__);
-    cprintf("rodata   load:%04x run:%04x size:%04x\n\r",&_RODATA_LOAD__,&_RODATA_RUN__,&_RODATA_SIZE__);
-    cprintf("data     load:%04x run:%04x size:%04x\n\r",&_DATA_LOAD__,&_DATA_RUN__,&_DATA_SIZE__);
-    cprintf("bss      load:%04x run:%04x size:%04x\n\r",&_BSS_LOAD__,&_BSS_RUN__,&_BSS_SIZE__);
-    cprintf("heap     maxavail:%04x avail:%04x\n\r",_heapmaxavail(),_heapmemavail());
-    //cprintf("%04x\n\r",a);
-    //cprintf("heapavail:%04x\n\r",_heapmemavail());
-    //conio_update();
-    //while(1){}
-    }
-    }
-    #endif
-
-    #if 0
-    {
-    extern unsigned int _CONSTRUCTOR_TABLE__;
-    extern unsigned char _CONSTRUCTOR_COUNT__;
-    extern unsigned int _DESTRUCTOR_TABLE__;
-    extern unsigned char _DESTRUCTOR_COUNT__;
-    int i;
-    clrscr();
-    // select driver + init joystick api
-    gotoxy(0,0);
-
-    cputhex16(&_CONSTRUCTOR_COUNT__);
-    cputs(" ");
-    cputhex16((unsigned char)_CONSTRUCTOR_COUNT__);
-    for(i=0;i<4;i++)
-    {
-//    cprintf(">%04x\n\r",(int)_CONSTRUCTOR_TABLE__[i]);
-gotoxy(1,1+i);
-    cputhex16((unsigned int)((&_CONSTRUCTOR_TABLE__)+i));
-    cputs(" ");
-    cputhex16(*(unsigned int*)((&_CONSTRUCTOR_TABLE__)+i));
-    cputs(" ");
-    cputhex16(*(unsigned int*)&_CONSTRUCTOR_TABLE__);
-    //t++;
-    //cputs(" ");
-    //cputhex16((unsigned int)&_CONSTRUCTOR_TABLE__[i]);
-    //cputs(" ");
-    //cputhex16((unsigned int)_CONSTRUCTOR_TABLE__[i]);
-
-    }
-
-    for(i=0;i<4;i++)
-    {
-//    cprintf(">%04x\n\r",(int)_CONSTRUCTOR_TABLE__[i]);
-gotoxy(1,5+1+i);
-    cputhex16((unsigned int)((&_DESTRUCTOR_TABLE__)+i));
-    cputs(" ");
-    cputhex16(*(unsigned int*)((&_DESTRUCTOR_TABLE__)+i));
-    cputs(" ");
-    cputhex16(*(unsigned int*)&_DESTRUCTOR_TABLE__);
-    //t++;
-    //cputs(" ");
-    //cputhex16((unsigned int)&_CONSTRUCTOR_TABLE__[i]);
-    //cputs(" ");
-    //cputhex16((unsigned int)_CONSTRUCTOR_TABLE__[i]);
-
-    }
-
-    while(1)
-    {
-    }
-    }
-    #endif
-
-    #if 0
-    {
-    static char mystring[0x10]="abcdef";
-
-    clrscr();
-    // select driver + init joystick api
-    gotoxy(0,0);
-    cputs("str1:");cputs(VERSION);cputs("\n\r");
-    cputs("str2:");cputs(mystring);cputs("\n\r");
-//    cputs("str2:");cputhex16(mystring);cputs("\n\r");
-
-        cprintf("str1:%s\n\r",VERSION);
-        cprintf("str2:%s\n\r",mystring);
-        cprintf("str2:%x\n\r",mystring);
-
-//    init_joy();
-    while(1)
-    {
-
-    //bgcolor(i&0xf);
-    //textcolor(1);textbackground(-1);
-
-    //gotoxy(0,0);
-    //cputs("does it work?\n\r");
-//    char c;
-//    c=cgetc();
-//    gotoxy(0,4);cprintf("><<%02x<\n",c);
-        //gotoxy(0,0);textcolor(1);bgcolor(0);
-        //textcolor((i++)&0xff);
-    gotoxy(1,5);
-    cprintf("%d\n",i++);
-    cprintf("%d  %x\n",i++,joy_read(0));
-    //cprintf("%d\n",MAX_PLR+7);
-    //cprintf("%d\n",MAX_PLR);
-//     cputs("does it work?\n");
-    //textcolor(1);textbackground(3);
-     //gotoxy(2,5);
-     //cputs("abcdefghijklmnopqrstuvwxyz1234567890\n");
-    //textcolor(5);textbackground(9);
-     //gotoxy(2,8);
-     //cputs("abcdefghijklmnopqrstuvwxyz1234567890\n");
-//     gotoxy(wherex(),wherey());
-//     cputs("AAAA\n");
-
-    #if defined(CONIOUPDATE)
-    conio_update();
-    #endif
-    }
-    }
-    #endif
 
     // make the screen all black (huu :=P)
     bgcolor(COL_BG); bordercolor(COL_BG); textcolor(COL_BG);clrscr();
@@ -1323,13 +1145,22 @@ gotoxy(1,5+1+i);
     // select driver + init joystick api
     init_joy();
     
-    #if !defined(NOHISCORES)
+#if !defined(NOHISCORES)
     inithiscore();
-    #endif
+#endif
 
     // reset timers
     ticks_reset();
-
+    
+#if defined(NOTITLESCREEN)
+    // simpler main loop when there is no title screen
+    while (1) {
+        ingame();
+#if !defined(NOHISCORES)
+        showhiscores();
+#endif
+    }
+#else
     // enter the main loop
     while(!finished) {
         // the title screen
@@ -1354,15 +1185,15 @@ gotoxy(1,5+1+i);
                 break;
         }
     }
+#endif
 
 #ifndef CONIORESTORES
     clrscr();
 #endif
 
-    // KLUDGES: switch back to VIC screen
-#if defined (__VDC__)
+    // restore original video mode
+#if defined (__C128__)
     cputs("switching to old video mode...\n\r");
-    //puts("\x1bx"); // send ESC-x to stdout
     videomode(oldvideomode);
 #endif
 
@@ -1376,7 +1207,10 @@ gotoxy(1,5+1+i);
 
 #include "input.c"
 #include "output.c"
+
+#if !defined(NOTITLESCREEN)
 #include "title.c"
+#endif
 
 #if !defined(NOHISCORES)
 #include "hiscore.c"

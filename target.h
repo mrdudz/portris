@@ -50,6 +50,9 @@ misc
 
 title screen
 
+#define NOTITLESCREEN
+- omit the title screen alltogether
+
 #define NOQUIT
 - omit the "quit program" option from main menu
 
@@ -102,14 +105,22 @@ hiscore screen
 #  define SCREENY	  25
 
 /* FIXME: file too large */
+#elif defined(__C16__) && defined(__C16EXP__)
+#  define SCREENX	  40
+#  define SCREENY	  25
+#  define NOKBREPEAT           // FIXME: missing in cc65 lib
+#  define NOWAITVBLANK         // FIXME: missing in cc65 lib
+
 #elif defined(__C16__)
 #  define SCREENX	  40
 #  define SCREENY	  25
 #  define NOKBREPEAT           // FIXME: missing in cc65 lib
 #  define NOWAITVBLANK         // FIXME: missing in cc65 lib
-//#define NOHISCORES
-//#define NOSTARSFX
-//#define NOMELTDOWNFX
+
+#define NOTITLESCREEN
+#define NOHISCORES
+#define NOSTARSFX
+#define NOMELTDOWNFX
 //#define NOQUIT
 //#define NOCOLORS
 //#define NOBGCOLORS
@@ -313,6 +324,7 @@ hiscore screen
 //#define NO2DIMARRAYS
 //#define NOGLOBALPTRINIT
 #define NOHISCORES
+#define NOTITLESCREEN
 
 /* misc targets */
 
