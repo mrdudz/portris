@@ -234,6 +234,13 @@ apple2enh: $(SOURCEFILES)
 atari: $(SOURCEFILES)
 	@echo "atari800 ..."
 	$(CL65) $(CL65FLAGS) -o portris_atari.xex -t atari main.c
+	$(MKDIR) atr
+	$(CP) mydos-dos.sys atr/dos.sys
+	$(CP) mydos-dup.sys atr/dup.sys
+	$(CP) portris_atari.xex atr/portris
+	$(CP) $(JOYDRV)/atari/drv/joy/*.joy atr/
+	$(DIR2ATR) -m -b MyDos4534 portris_atari.atr atr $(NULLOUT) $(NULLERR)
+	$(RMDIR) atr
 
 .PHONY: nes osa65 atmos pcengine gamate
 
@@ -291,6 +298,7 @@ clean:
 	$(DEL) portris*.elf
 	$(DEL) portris*.gxb
 	$(DEL) portris*.tap
+	$(DEL) portris*.atr
 	$(DEL) *.o
 	$(DEL) *.lst
 	$(DEL) *.map
@@ -356,6 +364,7 @@ runcbm610: cbm610
 
 runatari: atari
 	$(ATARI8EMU) portris_atari.xex
+#	$(ATARI8EMU) portris_atari.atr
 # KLUDGES: the damn thing messes with key repeat :/
 	-@xset r on
 
