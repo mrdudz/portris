@@ -22,19 +22,34 @@
 // nullify some functions that would otherwhise just waste memory
 
 #ifdef NOCOLORS
+#ifdef textcolor
+    #undef textcolor
+#endif
 #ifndef textcolor
     #define textcolor(_x)
 #endif
 #endif
 
 #ifdef NOBGCOLORS
+
+#ifdef bgcolor
+    #undef bgcolor
+#endif
 #ifndef bgcolor
     #define bgcolor(_x)
+#endif
+
+#ifdef bordercolor
+    #undef bordercolor
 #endif
 #ifndef bordercolor
     #define bordercolor(_x)
 #endif
+
 #elif defined(NOBORDER)
+#ifdef bordercolor
+    #undef bordercolor
+#endif
     #define bordercolor(_x)
 #endif
 
@@ -47,6 +62,15 @@
 #endif
 
 #ifdef NOKBREPEAT
+#ifdef kbrepeat
+    #undef kbrepeat
+#endif
+#ifdef kbrepeatrate
+    #undef kbrepeatrate
+#endif
+#ifdef kbrepeatdelay
+    #undef kbrepeatdelay
+#endif
     #define kbrepeat(_x)
     #define kbrepeatrate(_x)
     #define kbrepeatdelay(_x)
@@ -57,17 +81,23 @@
 #endif
 
 #ifdef NOREVERS
+#ifdef revers
     #undef revers
+#endif
     #define revers(_x)
 #endif
 
 #ifdef NOWAITVBLANK
+#ifdef waitvsync
+    #undef waitvsync
+#endif
     #define waitvsync()
 #endif
 
 #if !defined(CONIOINIT)
     #define conio_init()
 #endif
+
 #if !defined(CONIOUPDATE)
     #define conio_update()
 #endif

@@ -178,7 +178,7 @@ cbmdisk: $(CBMTARGETS) cbmloader
 	-write portris_c128.prg portris-c128 \
 	-write portris_c128_vdc.prg portris-c128vdc \
 	-write portris_vic20.prg portris-vic20 \
-	-write portris_c16.prg portris-c16 \
+	-write portris_c16exp.prg portris-c16exp \
 	-write portris_plus4.prg portris-plus4 \
 	-write portris_pet.prg portris-pet \
 	-write portris_cbm510.prg portris-cbm510 \

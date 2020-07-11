@@ -389,71 +389,37 @@ BLOCK *blk;
 const BLOCK *blk;
 #endif
 register unsigned char *block;
-unsigned char x,y,bx,by,size;
+unsigned char x, y, bx, by, size;
 
-    #if !defined(NOCOLORS)
+#if !defined(NOCOLORS)
 unsigned char col;
-        //col=colortable[pf->nc];
-        col=GET1DIM(colortable,pf->nc);
-    #endif
+    col = GET1DIM(colortable,pf->nc);
+#endif
 
-    //blk=myblocks[pf->nn];
-    //blk=myblocks[(int)pf->nn];
-    blk=GET1DIM(myblocks,pf->nn);
-    size=blk->size;
-    //size=myblocks[(int)pf->nn]->size;
-    {
-    //blk=myblocks[0];
-    //size=4;
-    }
+    blk = GET1DIM(myblocks,pf->nn);
+    size = blk->size;
 
-    //cprintf("n:%d\n\r",blk->size);
-    //cprintf("s:%d\n\r",size);
+    block = (unsigned char*)&GET2DIM(blk->map, 0, 0, 16);
 
+    bx = pf->px;
+    by = PF_Y+1;
 
-//     #if !defined (NO2DIMARRAYS)
-//     //block=&blk->map[0][0];
-//     block=&blk->map[(int)0][(int)0];
-//     #else
-//     block=&blk->map[0+0];
-//     #endif
-
-    block=(unsigned char*)&GET2DIM(blk->map,0,0,16);
-
-    {
-    //block=blk->map;
-    }
-
-    bx=pf->px;
-    by=PF_Y+1;
-
-//size=4;
-
-    //for(y=0;y<size;++y)
-    for(y=0;y<2;++y)
-    {
-             gotoxy(bx,by);
-             for(x=0;x<size;++x)
-             {
-                        if (*block)
-                 {
-                           textcolor(col);
-                              revers(1);cputc(BLK_SET);revers(0);
-                           //cputc('+');
-                 }
-                 else
-                 {
-                           cputc(BLK_NONE);
-                           //cputc('-');
-                 }
-                        ++block;
-             }
-             while(x<4)
-             {
-                     cputc(BLK_NONE);
-                    ++x;
-             }
-             ++by;
+    for(y = 0; y < 2; ++y) {
+        gotoxy(bx, by);
+        for(x = 0; x < size; ++x) {
+            if (*block) {
+                textcolor(col);
+                revers(1); cputc(BLK_SET); revers(0);
+            } else {
+                cputc(BLK_NONE);
+            }
+            ++block;
+        }
+        while(x < 4) {
+            cputc(BLK_NONE);
+            ++x;
+        }
+        ++by;
     }
     return(0);
 }
@@ -461,69 +427,54 @@ unsigned char col;
 // set active block to next block
 void block_next(PLAYFIELD *pf)
 {
-    pf->bn=pf->nn;    // block number
-    pf->bc=pf->nc;    // color
+    pf->bn = pf->nn;    // block number
+    pf->bc = pf->nc;    // color
     // position new block
-    pf->bx=(PF_X/2);pf->by=0;
+    pf->bx = (PF_X / 2); 
+    pf->by = 0;
 }
 
 // randomize next block
 void block_randomize(PLAYFIELD *pf)
 {
 unsigned char c;
-    c=rand();
-    pf->nn=c&0x3;     // block number
-    pf->nc=c&0xf;     // color
+    c = rand();
+    pf->nn = c & 0x3;     // block number
+    pf->nc = c & 0xf;     // color
 }
 
 // clears playfield and counts free blocks
 int clear_pf(PLAYFIELD *pf)
 {
-unsigned char x,y;
+unsigned char x, y;
 register unsigned char *blocks;
-unsigned char cnt=0;
+unsigned char cnt = 0;
 
+    blocks = &GET2DIM(pf->blk, 0, 0, PF_VX);
 
-//     #if !defined (NO2DIMARRAYS)
-//     blocks=&pf->blk[0][0];
-//     #else
-//     blocks=&pf->blk[0+0];
-//     #endif
-
-    blocks=&GET2DIM(pf->blk,0,0,PF_VX);
-
-    for(y=0;y<PF_Y+3;++y)
-    {
-         for(x=0;x<3;++x)
-         {
-                 *blocks++=1;
-         }
-         for(x=0;x<PF_X;++x)
-         {
-                 if(*blocks==NO_BLOCK)
-                    {
-                           cnt++;
-                 }
-                else
-                {
-                     *blocks=NO_BLOCK;
-                }
-                    ++blocks;
-         }
-         for(x=0;x<3;++x)
-         {
-                 *blocks++=1;
-         }
+    for(y = 0; y < PF_Y + 3; ++y) {
+        for(x=0;x<3;++x) {
+            *blocks++=1;
+        }
+        for(x = 0; x < PF_X; ++x) {
+            if(*blocks == NO_BLOCK) {
+                cnt++;
+            } else {
+                *blocks = NO_BLOCK;
+            }
+            ++blocks;
+        }
+        for(x = 0; x < 3; ++x) {
+            *blocks++ = 1;
+        }
     }
-    for(;y<PF_VY;++y)
-    {
-         for(x=0;x<PF_VX;++x)
-         {
-                 *blocks++=1;
+    for(; y < PF_VY; ++y) {
+        for(x = 0; x < PF_VX; ++x) {
+            *blocks++ = 1;
         }
     }
 
-    pf->lines=0;
+    pf->lines = 0;
 
     return(cnt);
 }
@@ -531,166 +482,92 @@ unsigned char cnt=0;
 // collapse playfield (remove full lines)
 int collapse_pf(PLAYFIELD *pf)
 {
-unsigned char x,y;
+unsigned char x, y;
 unsigned char *blocks;
-unsigned char cnt=0,lines=0;
+unsigned char cnt = 0,lines = 0;
 
-//     #if !defined (NO2DIMARRAYS)
-//     blocks=&(pf->blk[(PF_Y+2)][PF_X+2]);
-//     #else
-//     blocks=&(pf->blk[((int)(PF_Y+2)*(int)PF_VX)+(int)PF_X+2]);
-//     #endif
+    blocks = &GET2DIM(pf->blk, (PF_Y+2), (PF_X+2), PF_VX);
 
-    blocks=&GET2DIM(pf->blk,(PF_Y+2),(PF_X+2),PF_VX);
-
-    for(y=(PF_Y+2);y>1;)
-    {
+    for(y = (PF_Y + 2); y > 1;) {
         cnt=0;
-        for(x=0;x<PF_X;++x)
-        {
-             if(*blocks!=NO_BLOCK)
-            {
-                    ++cnt;
+        for(x = 0; x < PF_X; ++x) {
+            if(*blocks!=NO_BLOCK) {
+                ++cnt;
             }
             --blocks;
         }
 
-          if(cnt==0) return(lines);
+        if(cnt == 0) {
+            return(lines);
+        }
 
-        if(cnt==PF_X)
-        {
+        if(cnt == PF_X) {
             // remove line
-
-//             #if !defined (NO2DIMARRAYS)
-//             memmove(&pf->blk[1][0],&pf->blk[0][0],y*PF_VX);
-//             memset(&pf->blk[0][0],1,3);
-//             memset(&pf->blk[0][3],NO_BLOCK,PF_X);
-//             memset(&pf->blk[0][3+PF_X],1,3);
-//             #else
-//             memmove(&pf->blk[((int)1*(int)PF_VX)+0],&pf->blk[0+0],y*PF_VX);
-//             memset (&pf->blk[0+0],1,3);
-//             memset (&pf->blk[0+3],NO_BLOCK,PF_X);
-//             memset (&pf->blk[0+3+PF_X],1,3);
-//             #endif
-
-             memmove(&GET2DIM(pf->blk,1,0,PF_VX),&GET2DIM(pf->blk,0,0,PF_VX),y*PF_VX);
-             memset (&GET2DIM(pf->blk,0,0,PF_VX),1,3);
-             memset (&GET2DIM(pf->blk,0,3,PF_VX),NO_BLOCK,PF_X);
-             memset (&GET2DIM(pf->blk,0,3+PF_X,PF_VX),1,3);
+            memmove(&GET2DIM(pf->blk, 1, 0, PF_VX),
+                    &GET2DIM(pf->blk, 0, 0, PF_VX), y * PF_VX);
+            memset (&GET2DIM(pf->blk, 0, 0, PF_VX), 1, 3);
+            memset (&GET2DIM(pf->blk, 0, 3, PF_VX), NO_BLOCK, PF_X);
+            memset (&GET2DIM(pf->blk, 0, 3 + PF_X, PF_VX), 1, 3);
 
             ++lines;
-            // go back one line
-//             blocks+=(PF_X);
 
             // advance to next line
-            blocks-=6;
+            blocks -= 6;
             --y;
-        }
-        else
-        {
+        } else {
             // advance to next line
-            blocks-=6;
+            blocks -= 6;
             --y;
         }
     }
-    pf->lines+=lines;
+    pf->lines += lines;
     return(lines);
 }
 
 // update one playfield
 void update_pf_block(PLAYFIELD *pf)
 {
-unsigned char x,y,px,py,size;
+unsigned char x, y, px, py, size;
 register unsigned char blk;
 register unsigned char *blocks;
 
-    if(pf->gameover)
-    {
+    if(pf->gameover) {
         return;
     }
 
-    //size=myblocks[pf->bn]->size;
-    size=GET1DIM(myblocks,pf->bn)->size;
-    py=pf->by;
+    size = GET1DIM(myblocks, pf->bn)->size;
+    py = pf->by;
 
-    if(!((size+py)>3))
-    {
+    if(!((size + py) > 3)) {
         return;
-    }
-    else
-    {
+    } else {
 
-        if(py>3)
-        {
+        if(py > 3) {
             py--;
             size++;
-//             #if defined(__GAMEBOY__)
-//             /* neither lcc nor sdcc would compile the latter */
-//             {
-//     //        int i=(py*PF_VX)+3;
-// //            blocks=pf->blk+i;
-//             blocks=&pf->blk[(int)py][(int)3];
-//             }
-//             #else
-//
-//                 #if !defined (NO2DIMARRAYS)
-//                 blocks=&pf->blk[py][3];
-//                 #else
-//                 blocks=&pf->blk[((int)py*(int)PF_VX)+(int)3];
-//                 #endif
-//
-//             #endif
-
-
-            blocks=&GET2DIM(pf->blk,py,3,PF_VX);
-
+            blocks = &GET2DIM(pf->blk, py, 3, PF_VX);
             py-=3;
-        }
-        else
-        {
-//             #if defined(__GAMEBOY__)
-//             /* neither lcc nor sdcc would compile the latter */
-//             {
-//             //int i=(3*PF_VX)+3;
-//             //blocks=pf->blk+i;
-//             blocks=&pf->blk[(int)3][(int)3];
-//             }
-//             #else
-//                 #if !defined (NO2DIMARRAYS)
-//                 blocks=&pf->blk[3][3];
-//                 #else
-//                 blocks=&pf->blk[((int)3*(int)PF_VX)+(int)3];
-//                 #endif
-//             #endif
-
-            blocks=&GET2DIM(pf->blk,3,3,PF_VX);
-
+        } else {
+            blocks = &GET2DIM(pf->blk, 3, 3, PF_VX);
             py=0;
-
         }
 
-        px=pf->px;
+        px = pf->px;
 
-        for(y=0;(y<size)&(py<PF_Y);++y)
-        {
+        for(y = 0; (y < size) & (py < PF_Y); ++y) { // FIXME: the & smells like a bug/type
             gotoxy(px,py);
 
-            for(x=0;x<PF_X;++x)
-            {
-                    blk=*blocks++;
-                    if(blk==NO_BLOCK)
-                    {
-                            cputc(BLK_NONE);
-                    }
-                    else
-                    {
-                            //textcolor(colortable[blk]);
-                            textcolor(GET1DIM(colortable,blk));
-                            revers(1);cputc(BLK_SET);revers(0);
-                    }
+            for(x = 0; x < PF_X; ++x) {
+                blk = *blocks++;
+                if(blk == NO_BLOCK) {
+                    cputc(BLK_NONE);
+                } else {
+                    textcolor(GET1DIM(colortable,blk));
+                    revers(1); cputc(BLK_SET); revers(0);
+                }
             }
             blocks+=6;
-                py++;
+            py++;
         }
     }
 
@@ -703,41 +580,28 @@ unsigned char x,y,px,py;
 register unsigned char blk;
 register unsigned char *blocks;
 
-    if(pf->gameover)
-    {
+    if(pf->gameover) {
         return;
     }
 
-    px=pf->px;py=0;
+    px=pf->px; py = 0;
 
-//     #if !defined (NO2DIMARRAYS)
-//     blocks=&pf->blk[3][3];
-//     #else
-//     blocks=&pf->blk[((int)3*(int)PF_VX)+(int)3];
-//     #endif
+    blocks = &GET2DIM(pf->blk, 3, 3, PF_VX);
 
-    blocks=&GET2DIM(pf->blk,3,3,PF_VX);
+    for(y = 0;y <PF_Y; ++y) {
+        gotoxy(px, py);
 
-    for(y=0;y<PF_Y;++y)
-    {
-        gotoxy(px,py);
-
-        for(x=0;x<PF_X;++x)
-        {
-                   blk=*blocks++;
-                   if(blk==NO_BLOCK)
-                   {
-                              cputc(BLK_NONE);
-                   }
-                   else
-                   {
-                              //textcolor(colortable[blk]);
-                              textcolor(GET1DIM(colortable,blk));
-                              revers(1);cputc(BLK_SET);revers(0);
-                   }
+        for(x = 0; x < PF_X; ++x) {
+            blk = *blocks++;
+            if(blk == NO_BLOCK) {
+                cputc(BLK_NONE);
+            } else {
+                textcolor(GET1DIM(colortable, blk));
+                revers(1); cputc(BLK_SET); revers(0);
+            }
         }
-        blocks+=6;
-         py++;
+        blocks += 6;
+        py++;
     }
 
 }
@@ -1113,8 +977,8 @@ int main(void)
 unsigned char finished=0;
 
 #if defined (__C128__)
-#if defined (__VDC__)
 unsigned char oldvideomode;
+#if defined (__VDC__)
     oldvideomode = videomode(VIDEOMODE_80COL);
 #else
     oldvideomode = videomode(VIDEOMODE_40COL);

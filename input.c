@@ -64,6 +64,7 @@ void init_joy(void)
 
     #ifndef NOJOYSELECT
     textcolor(COLOR_WHITE);
+
     cputsxy(0,0,"select input driver\r\n\n");
 
     for(i=0;i<numdrivers;++i)
@@ -92,25 +93,14 @@ void init_joy(void)
     #else
     Res = joy_load_driver (drivernames[x]);
 
-    if (Res != JOY_ERR_OK) 
-    {
-           cprintf ("Error in joy_load_driver: %u\r\n", Res);
+    if (Res != JOY_ERR_OK) {
+        cprintf ("Error in joy_load_driver: %u\r\n", Res);
         cprintf ("os: %u, %s\r\n", _oserror, _stroserror (_oserror));
-
-        #if 0
-        while(!kbhit())
-        {
-            /* wait */
-        } cgetc();
-        #endif
 
         // move into variable to get rid of compiler warning
         // "statement has no effect"
-        x=cgetc();
-           //exit (EXIT_FAILURE);
-        }
-    else
-    {
+        cgetc();
+    } else {
         numjoysticks=joy_count();
         usejoysticks=1;
     }
