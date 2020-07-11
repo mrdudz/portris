@@ -5,8 +5,6 @@ else
 include Makefile.config.local
 endif
 
-#.SILENT:
-
 # some magic to handle windows vs linux, shamelessly stolen from olivers makefile
 ifneq ($(shell echo),)
   CMD_EXE = 1
@@ -30,7 +28,7 @@ else
   CP = cp
 endif
 
-ifdef QUIET
+ifndef VERBOSE
   .SILENT:
   NULLOUT = >$(NULLDEV)
   NULLERR = 2>$(NULLDEV)
@@ -247,8 +245,8 @@ pcengine: $(SOURCEFILES)
 	@echo "pcengine ..."
 	$(CL65) $(CC65FLAGS) -Wl -D__CARTSIZE__=0x8000 -o portris_pcengine.bin -t pce main.c
 # the first 8k block must be the last 8k block in the cartridge image
-	$(DD) if=portris_pcengine.bin bs=8K skip=3 > portris_pcengine.pce
-	$(DD) if=portris_pcengine.bin bs=8K count=3 >> portris_pcengine.pce
+	$(DD) if=portris_pcengine.bin bs=8K skip=3 > portris_pcengine.pce $(NULLOUT) $(NULLERR)
+	$(DD) if=portris_pcengine.bin bs=8K count=3 >> portris_pcengine.pce $(NULLOUT) $(NULLERR)
 
 atmos: $(SOURCEFILES)
 	@echo "atmos ..."
