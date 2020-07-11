@@ -49,7 +49,7 @@ DD=dd
 CBMTARGETS=c64 c6480 c6480m c128 c128vdc pet plus4 cbm510 cbm610 vic c16exp geos
 #vichacked vic40 gamate c16
 
-CC65TARGETS=apple2 apple2enh atari nes pcengine atmos
+CC65TARGETS=apple2 apple2enh atari atarixl nes pcengine atmos
 CC65TARGETS+=$(CBMTARGETS) cbmloader cbmdisk geosdisk
 
 help:
@@ -242,6 +242,17 @@ atari: $(SOURCEFILES)
 	$(DIR2ATR) -m -b MyDos4534 portris_atari.atr atr $(NULLOUT) $(NULLERR)
 	$(RMDIR) atr
 
+atarixl: $(SOURCEFILES)
+	@echo "atari800xl ..."
+	$(CL65) $(CL65FLAGS) -o portris_atarixl.xex -t atarixl main.c
+	$(MKDIR) atr
+	$(CP) mydos-dos.sys atr/dos.sys
+	$(CP) mydos-dup.sys atr/dup.sys
+	$(CP) portris_atarixl.xex atr/portris
+	$(CP) $(JOYDRV)/atarixl/drv/joy/*.joy atr/
+	$(DIR2ATR) -m -b MyDos4534 portris_atarixl.atr atr $(NULLOUT) $(NULLERR)
+	$(RMDIR) atr
+
 .PHONY: nes osa65 atmos pcengine gamate
 
 nes: $(SOURCEFILES)
@@ -365,6 +376,12 @@ runcbm610: cbm610
 runatari: atari
 	$(ATARI8EMU) portris_atari.xex
 #	$(ATARI8EMU) portris_atari.atr
+# KLUDGES: the damn thing messes with key repeat :/
+	-@xset r on
+
+runatarixl: atarixl
+	$(ATARI8EMU) portris_atarixl.xex
+#	$(ATARI8EMU) portris_atarixl.atr
 # KLUDGES: the damn thing messes with key repeat :/
 	-@xset r on
 
