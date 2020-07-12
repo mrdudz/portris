@@ -237,7 +237,7 @@ atari: $(SOURCEFILES)
 	$(MKDIR) atr
 	$(CP) mydos-dos.sys atr/dos.sys
 	$(CP) mydos-dup.sys atr/dup.sys
-	$(CP) portris_atari.xex atr/portris
+	$(CP) portris_atari.xex atr/portris.ar0
 	$(CP) $(JOYDRV)/atari/drv/joy/*.joy atr/
 	$(DIR2ATR) -m -b MyDos4534 portris_atari.atr atr $(NULLOUT) $(NULLERR)
 	$(RMDIR) atr
@@ -248,7 +248,7 @@ atarixl: $(SOURCEFILES)
 	$(MKDIR) atr
 	$(CP) mydos-dos.sys atr/dos.sys
 	$(CP) mydos-dup.sys atr/dup.sys
-	$(CP) portris_atarixl.xex atr/portris
+	$(CP) portris_atarixl.xex atr/portris.ar0
 	$(CP) $(JOYDRV)/atarixl/drv/joy/*.joy atr/
 	$(DIR2ATR) -m -b MyDos4534 portris_atarixl.atr atr $(NULLOUT) $(NULLERR)
 	$(RMDIR) atr
@@ -380,8 +380,8 @@ runatari: atari
 	-@xset r on
 
 runatarixl: atarixl
-	$(ATARI8EMU) portris_atarixl.xex
-#	$(ATARI8EMU) portris_atarixl.atr
+	$(ATARI8XLEMU) portris_atarixl.xex
+#	$(ATARI8XLEMU) portris_atarixl.atr
 # KLUDGES: the damn thing messes with key repeat :/
 	-@xset r on
 
