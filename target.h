@@ -193,13 +193,10 @@ hiscore screen
 #  define SCREENY	  24
 #  define NOCOLORS
 #  define NOBGCOLORS
-#  define NOJOYSTICKS
 #  define NOKBREPEAT
 #  define NOCLOCK
 
 #  define NOTVMODE              // FIXME: missing in cc65 lib
-#define NOSTARSFX
-#define NOMELTDOWNFX
 
 #elif defined(__APPLE2__)
 // that ok ?
@@ -207,16 +204,12 @@ hiscore screen
 #  define SCREENY	  24
 #  define NOCOLORS
 #  define NOBGCOLORS
-#  define NOJOYSTICKS
 #  define NOKBREPEAT
 #  define NOCLOCK
 
 #  define NOWAITVBLANK          // FIXME: missing in cc65 lib
 #  define NOTVMODE              // FIXME: missing in cc65 lib
 #define CH_DEL          0x7F    // FIXME: missing in cc65 lib
-
-#define NOSTARSFX
-#define NOMELTDOWNFX
 
 #elif defined(__ATARI__)
 #  define SCREENX	  40
