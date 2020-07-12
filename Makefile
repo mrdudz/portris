@@ -218,6 +218,7 @@ apple2: $(SOURCEFILES)
 	$(CP) ProDOS_2_4_2.dsk portris_apple2.dsk
 	java -jar $(ACMD) -p portris_apple2.dsk portris.system sys < $(shell cl65 --print-target-path)/apple2/util/loader.system
 	java -jar $(ACMD) -as portris_apple2.dsk portris       bin < portris_apple2.bin
+	java -jar $(ACMD) -p portris_apple2.dsk a2.stdjoy.joy bin < $(shell cl65 --print-target-path)/apple2/drv/joy/a2.stdjoy.joy
 
 apple2enh: $(SOURCEFILES)
 	@echo "apple2enh ..."
@@ -228,8 +229,9 @@ apple2enh: $(SOURCEFILES)
 # larger programs
 	$(CL65) $(CL65FLAGS) -o portris_apple2enh.bin -t apple2enh main.c
 	$(CP) ProDOS_2_4_2.dsk portris_apple2enh.dsk
-	java -jar $(ACMD) -p portris_apple2enh.dsk portris.system sys < $(shell cl65 --print-target-path)/apple2/util/loader.system
+	java -jar $(ACMD) -p portris_apple2enh.dsk portris.system sys < $(shell cl65 --print-target-path)/apple2enh/util/loader.system
 	java -jar $(ACMD) -as portris_apple2enh.dsk portris       bin < portris_apple2enh.bin
+	java -jar $(ACMD) -p portris_apple2enh.dsk a2e.stdjoy.joy bin < $(shell cl65 --print-target-path)/apple2enh/drv/joy/a2e.stdjoy.joy
 
 atari: $(SOURCEFILES)
 	@echo "atari800 ..."
