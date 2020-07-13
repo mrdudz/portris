@@ -1,4 +1,6 @@
 
+#ifndef TARGET_H_
+#define TARGET_H_
 
 ///////////////////////////////////////////////////////////////////////////
 // define screensize and some other capabilities of the target
@@ -33,6 +35,8 @@ input
 - target has no joystick support
 #define NOKEYBOARD
 - target has no keyboard support
+#define NOLOWERCASE
+- keys will always produce uppercase letters
 
 misc
 
@@ -176,40 +180,39 @@ hiscore screen
 #  define SCREENY	  25
 #  define NOCOLORS
 #  define NOBGCOLORS
-#  define NOJOYSTICKS		// why is that so?
+#  define NOJOYSTICKS       // FIXME: why is that so?
 #  define NOKBREPEAT
 #  define NOCLOCK
 
-#  define NOWAITVBLANK          // FIXME: missing in cc65 lib
-#define NOSTARSFX
-#define NOMELTDOWNFX
-#define NOJOYSELECT
+#  define NOWAITVBLANK      // FIXME: missing in cc65 lib
+#  define NOSTARSFX
+#  define NOMELTDOWNFX
+#  define NOJOYSELECT
 
 /* other cc65 targets */
 #elif defined(__APPLE2ENH__)
 
-// that ok ?
 #  define SCREENX	  40
 #  define SCREENY	  24
+
+#  define NOLOWERCASE
 #  define NOCOLORS
 #  define NOBGCOLORS
 #  define NOKBREPEAT
 #  define NOCLOCK
-
-#  define NOTVMODE              // FIXME: missing in cc65 lib
+#  define NOTVMODE
 
 #elif defined(__APPLE2__)
-// that ok ?
 #  define SCREENX	  40
 #  define SCREENY	  24
+
+#  define NOLOWERCASE
 #  define NOCOLORS
 #  define NOBGCOLORS
 #  define NOKBREPEAT
 #  define NOCLOCK
-
-#  define NOWAITVBLANK          // FIXME: missing in cc65 lib
-#  define NOTVMODE              // FIXME: missing in cc65 lib
-#define CH_DEL          0x7F    // FIXME: missing in cc65 lib
+#  define NOWAITVBLANK
+#  define NOTVMODE
 
 #elif defined(__ATARI__)
 #  define SCREENX	  40
@@ -220,8 +223,8 @@ hiscore screen
 #  define NOTVMODE              // FIXME: missing in cc65 lib
 
                                 // FIXME: cpeekc() etc missing in lib
-#define NOSTARSFX
-#define NOMELTDOWNFX
+#  define NOSTARSFX
+#  define NOMELTDOWNFX
 
 #elif defined(__BBC__)
 // that ok ?
@@ -269,34 +272,43 @@ hiscore screen
 #elif defined(__NES__)
 #  define SCREENX	  (32)
 #  define SCREENY	  (28)
+
 #  define NOCOLORS
 #  define NOBORDER
+
 #  define NOKBREPEAT
-#  define NOJOYSELECT
 #  define NOKEYBOARD
+
 #  define NOQUIT
+#  define NOCLOCK           // FIXME
 
-#  define NOJOYSTICKS       // FIXME
+#  define STATICJOYDRV
+#  define NOJOYSELECT
+
 #  define NOSTARSFX         // FIXME
+#  define NOMELTDOWNFX
 
-#define NOMELTDOWNFX
-#define NO2DIMARRAYS
-#define NOGLOBALPTRINIT
+//#  define NO2DIMARRAYS
+//#  define NOGLOBALPTRINIT
 
 #elif defined(__PCE__)
 #  define SCREENX	  (512/8)
 #  define SCREENY	  (224/8)
+
 #  define NOBORDER
+
 #  define NOKBREPEAT
-#  define NOJOYSELECT
+#  define NOKEYBOARD
+
 #  define NOMELTDOWNFX
 #  define NOSTARSFX
-#  define NOREVERS
-#  define NOKEYBOARD
-#  define NOWAITVBLANK
+
+#  define NOCLOCK           // FIXME
+
 #  define NOQUIT
 
-#  define NOJOYSTICKS       // FIXME
+#  define STATICJOYDRV
+#  define NOJOYSELECT
 
 /* program too large */
 #elif defined(__GAMATE__)
@@ -310,10 +322,11 @@ hiscore screen
 #  define NOKEYBOARD
 #  define NOQUIT
 
+#  define STATICJOYDRV
 #  define NOJOYSTICKS       // FIXME
-#  define NOSTARSFX         // FIXME
 
-#define NOMELTDOWNFX
+#  define NOSTARSFX         // FIXME
+#  define NOMELTDOWNFX
 //#define NO2DIMARRAYS
 //#define NOGLOBALPTRINIT
 #define NOHISCORES
@@ -547,6 +560,10 @@ hiscore screen
 #error "Unknown target system - FIXME!"
 #endif
 
+/* do some sanity checks on the above options */
+
 #if defined (NOJOYSTICKS) && defined (NOKEYBOARD)
 #warning "neither joystick nor keyboard input is enabled"
 #endif
+
+#endif // TARGET_H_

@@ -18,14 +18,20 @@ unsigned char usejoysticks = 0;
 unsigned char usejoysticks = 1;
 #endif
 
+#ifdef STATICJOYDRV
+
+#if defined(__PCE__)
+//extern char pce_stdjoy;
+#endif
+
+#endif
+
 unsigned char numjoysticks = 0;
 unsigned char lastkey = 0;
 
 #ifdef NOJOYSELECT
 const unsigned char *drivernames[5] =
 {
-// WTF?!?
-//(unsigned char *)joy_stddrv,
 NULL
 };
 #else
@@ -35,8 +41,7 @@ NULL
 unsigned char *drivernames[5]=
 {
 "none (keyboard)",
-(unsigned char *)joy_stddrv,
-//"c64-stdjoy.joy",
+(unsigned char *)joy_stddrv, //"c64-stdjoy.joy",
 "c64-ptvjoy.joy",
 "c64-hitjoy.joy",
 NULL
@@ -53,11 +58,14 @@ char numdrivers=(1+1);
 // load and init joydriver
 void init_joy(void)
 {
-    #if !defined (NOJOYSTICKS)
-    unsigned char Res,x;
-    #ifndef NOJOYSELECT
+#if !defined (NOJOYSTICKS)
+#if !defined (STATICJOYDRV)    
+    unsigned char Res;
+#endif
+    unsigned char x;
+#ifndef NOJOYSELECT
     unsigned char i;
-    #endif
+#endif
 
     numjoysticks=0; usejoysticks=0;
     clrscr();
@@ -88,6 +96,7 @@ void init_joy(void)
     #endif
 
     #ifdef STATICJOYDRV
+        joy_install(&joy_static_stddrv);
         numjoysticks=joy_count();
         usejoysticks=1;
     #else
@@ -110,6 +119,33 @@ void init_joy(void)
 }
 
 #if !defined (NOKEYBOARD)
+#if defined(NOLOWERCASE)
+#    if !defined (NO2DIMARRAYS)
+const unsigned char joykeys[8][4]=
+{
+    {'A','S','L',' '},
+    {'7','8','9','0'},
+    {'Q','W','E','R'},
+    {'U','I','O','P'},
+    {'1','2','3','4'},
+    {'G','H','J','K'},
+    {'5','6','T','Z'},
+    {'V','B','N','M'},
+};
+#    else
+const unsigned char joykeys[8*4]=
+{
+    'A','S','L',' ',
+    '7','8','9','0',
+    'Q','W','E','R',
+    'U','I','O','P',
+    '1','2','3','4',
+    'G','H','J','K',
+    '5','6','T','Z',
+    'V','B','N','M',
+};
+#    endif
+#else
 #    if !defined (NO2DIMARRAYS)
 const unsigned char joykeys[8][4]=
 {
@@ -135,7 +171,8 @@ const unsigned char joykeys[8*4]=
     'v','b','n','m',
 };
 #    endif
-#endif
+#endif // NOLOWERCASE
+#endif // NOKEYBOARD
 
 #if !defined (NOKEYBOARD)
 unsigned char poll_key(unsigned char n)

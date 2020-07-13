@@ -263,11 +263,14 @@ nes: $(SOURCEFILES)
 
 pcengine: $(SOURCEFILES)
 	@echo "pcengine ..."
+#	$(JOYDRV)/pce/drv/joy/pce-stdjoy.joy
 	$(CL65) $(CC65FLAGS) -Wl -D__CARTSIZE__=0x8000 -o portris_pcengine.bin -t pce main.c
 # the first 8k block must be the last 8k block in the cartridge image
-	$(DD) if=portris_pcengine.bin bs=8K skip=3 > portris_pcengine.pce $(NULLOUT) $(NULLERR)
-	$(DD) if=portris_pcengine.bin bs=8K count=3 >> portris_pcengine.pce $(NULLOUT) $(NULLERR)
+	$(DD) if=portris_pcengine.bin bs=8K skip=3 > portris_pcengine.pce $(NULLERR)
+	$(DD) if=portris_pcengine.bin bs=8K count=3 >> portris_pcengine.pce $(NULLERR)
 
+pce: pcengine
+	
 atmos: $(SOURCEFILES)
 	@echo "atmos ..."
 	$(CL65) $(CL65FLAGS) -o portris_atmos.tap -t atmos main.c

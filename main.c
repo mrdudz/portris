@@ -7,11 +7,9 @@
     | .__/ \___/|_|   \__|_|  |_|___/
     |_|
 
-    version 0.5, 13.12.2017
-
     a portable Tetris implementation targetted on cc65 (https://cc65.github.io/cc65/)
 
-    (w)2002-2017 Groepaz/Solution (groepaz@gmx.net)
+    (w)2002-2020 Groepaz/Solution (groepaz@gmx.net)
 
 ***********************************************************************************/
 
@@ -22,13 +20,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <conio.h>
+#include <ctype.h>
 #include <errno.h>
 #include <time.h>
 #include <joystick.h>
 
 // define screensize and some other capabilities of the target
 #include "portris.h"
-const char *VERSION="0.5";
+const char *VERSION = "0.5";
 
 // include other headers
 #include "input.h"

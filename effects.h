@@ -1,4 +1,7 @@
 
+#ifndef EFFECTS_H_
+#define EFFECTS_H_
+
 #ifdef NOMELTDOWNFX
 # define domeltdown()
 #else
@@ -22,3 +25,4 @@ void flasher(void);
 # define flasher()
 #endif
 
+#endif // EFFECTS_H_

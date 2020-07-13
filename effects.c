@@ -110,6 +110,10 @@ unsigned char i;
     for(i = 0; i < (SCREENY * 5); ++i) {
         waitvsync();
         flasher();
+        if(kbhit()) {
+            cgetc();
+            break;
+        }
 
         for(x=0;x<SCREENX;++x)
         {

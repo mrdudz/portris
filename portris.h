@@ -1,4 +1,7 @@
 
+#ifndef PORTRIS_H_
+#define PORTRIS_H_
+
 #if defined(__CC65__)
 // use static locals for speed
 #pragma static-locals(1)
@@ -191,3 +194,5 @@
 #endif
 
 #endif
+
+#endif // PORTRIS_H_

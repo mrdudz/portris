@@ -307,7 +307,11 @@ unsigned char c;
 #if !defined(NOKEYBOARD)
             if(kbhit())
             {
-                c=cgetc();
+#ifdef NOLOWERCASE
+                c = tolower(cgetc());
+#else
+                c = cgetc();
+#endif                
                 switch(c)
                 {
 

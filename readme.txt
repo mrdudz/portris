@@ -103,9 +103,9 @@ apple2     yes        ok          4           no
 apple2enh  yes        ok          4           no       
 atmos      yes        ok          3           no
 nes        yes        ok          3           no
+pcengine   yes      conio bugs    6           yes
 
 c64+soft80 yes        ok          8           yes
-pcengine   yes        ok          6           yes
 vic20exp   yes        ok          2           yes
 
 lunix       no (library missing - FIXME)

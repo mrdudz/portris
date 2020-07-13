@@ -1,4 +1,7 @@
 
+#ifndef INPUT_H_
+#define INPUT_H_
+
 #define TKEY_LEFT   1
 #define TKEY_RIGHT  2
 #define TKEY_UP     4
@@ -15,7 +18,7 @@ extern unsigned char lastkey;
 #if !defined (NO2DIMARRAYS)
 extern const unsigned char joykeys[8][4];
 #else
-extern const unsigned char joykeys[8*4];
+extern const unsigned char joykeys[8 * 4];
 #endif
 
 #if !defined (NOKEYBOARD)
@@ -33,3 +36,5 @@ void poll_controller(void);
 
 unsigned char keypressed(void);
 void flushkeys(void);
+
+#endif // INPUT_H_
