@@ -262,6 +262,8 @@ general:
 bugs:
 - when dropping a block only ONE line is ever cleared at once, when two lines
   should have been cleared, this will happen when the next block is dropped
+- the available joystick drives should be read from disk instead of using the
+  hardcoded c64 specific list
 
 More Ports?
 
