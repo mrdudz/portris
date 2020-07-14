@@ -73,21 +73,21 @@ hiscore screen
 /* CBM targets (cc65) */
 
 #if defined(__PET__)
-#  define SCREENX	  80
-#  define SCREENY	  25
+#  define SCREENX     80
+#  define SCREENY     25
 #  define NOCOLORS
 #  define NOBGCOLORS
 #  define NOWAITVBLANK          // FIXME: missing in cc65 lib
 
 #elif defined(__CBM510__)
-#  define SCREENX	  40
-#  define SCREENY	  25
+#  define SCREENX     40
+#  define SCREENY     25
 #  define NOTVMODE              // FIXME: missing in cc65 lib
 #  define NOKBREPEAT            // FIXME: missing in cc65 lib
 
 #elif defined(__CBM610__)
-#  define SCREENX	  80
-#  define SCREENY	  25
+#  define SCREENX     80
+#  define SCREENY     25
 #  define NOCOLORS
 #  define NOBGCOLORS
 #  define NOJOYSTICKS           // FIXME: missing in cc65 lib
@@ -97,27 +97,27 @@ hiscore screen
 #elif defined(__C64__) && !defined(__GEOS__)
 
 #if defined(__SOFT80__)
-#  define SCREENX	  80
-#  define SCREENY	  25
+#  define SCREENX     80
+#  define SCREENY     25
 #else
-#  define SCREENX	  40
-#  define SCREENY	  25
+#  define SCREENX     40
+#  define SCREENY     25
 #endif
 
 #elif defined(__PLUS4__)
-#  define SCREENX	  40
-#  define SCREENY	  25
+#  define SCREENX     40
+#  define SCREENY     25
 
 #elif defined(__C16__) && defined(__C16EXP__)
-#  define SCREENX	  40
-#  define SCREENY	  25
+#  define SCREENX     40
+#  define SCREENY     25
 #  define NOKBREPEAT           // FIXME: missing in cc65 lib
 #  define NOWAITVBLANK         // FIXME: missing in cc65 lib
 
 /* FIXME: file too large */
 #elif defined(__C16__)
-#  define SCREENX	  40
-#  define SCREENY	  25
+#  define SCREENX     40
+#  define SCREENY     25
 #  define NOKBREPEAT           // FIXME: missing in cc65 lib
 #  define NOWAITVBLANK         // FIXME: missing in cc65 lib
 
@@ -133,28 +133,28 @@ hiscore screen
 #elif defined(__C128__)
 
 #if defined (__VDC__)
-#  define SCREENX	  80
-#  define SCREENY	  25
+#  define SCREENX     80
+#  define SCREENY     25
 #else
-#  define SCREENX	  40
-#  define SCREENY	  25
+#  define SCREENX     40
+#  define SCREENY     25
 #endif
 
 #elif defined(__VIC20__)
 
 #if defined(__VIC20HACKED__)
 // with hardware 26x25
-#  define SCREENX	  26
-#  define SCREENY	  25
+#  define SCREENX     26
+#  define SCREENY     25
 #elif defined(__SOFT40__)
 // with software 40x24
-#  define SCREENX	  40
-#  define SCREENY	  24
+#  define SCREENX     40
+#  define SCREENY     24
 #  define NOCOLORS
 #else
 // with standard screensize
-#  define SCREENX	  22
-#  define SCREENY	  23
+#  define SCREENX     22
+#  define SCREENY     23
 #endif
 
 #undef COLOR_ORANGE
@@ -176,14 +176,14 @@ hiscore screen
 #define COLOR_GRAY3  	       	COLOR_WHITE
 
 #elif defined(__GEOS__)
-#  define SCREENX	  40
-#  define SCREENY	  25
+#  define SCREENX     40
+#  define SCREENY     25
 
 #  define NOCOLORS
 #  define NOBGCOLORS
-#  define NOKBREPEAT
-#  define NOCLOCK
-#  define NOREVERS
+#  define NOKBREPEAT        // FIXME: missing in cc65 lib
+#  define NOCLOCK           // FIXME: missing in cc65 lib
+#  define NOREVERS          // FIXME: missing in cc65 lib
 
 #  define NOWAITVBLANK      // FIXME: missing in cc65 lib
 #  define NOSTARSFX
@@ -197,8 +197,8 @@ hiscore screen
 /* other cc65 targets */
 #elif defined(__APPLE2ENH__)
 
-#  define SCREENX	  40
-#  define SCREENY	  24
+#  define SCREENX     40
+#  define SCREENY     24
 
 #  define NOCOLORS
 #  define NOBGCOLORS
@@ -207,8 +207,8 @@ hiscore screen
 #  define NOTVMODE
 
 #elif defined(__APPLE2__)
-#  define SCREENX	  40
-#  define SCREENY	  24
+#  define SCREENX     40
+#  define SCREENY     24
 
 #  define NOLOWERCASE
 #  define NOCOLORS
@@ -219,8 +219,8 @@ hiscore screen
 #  define NOTVMODE
 
 #elif defined(__ATARI__)
-#  define SCREENX	  40
-#  define SCREENY	  24	// its really 24 not 25!
+#  define SCREENX     40
+#  define SCREENY     24	// its really 24 not 25!
 #  define NOCOLORS
 #  define NOKBREPEAT
 #  define NOWAITVBLANK          // FIXME: missing in cc65 lib
@@ -232,8 +232,8 @@ hiscore screen
 
 #elif defined(__BBC__)
 // that ok ?
-#  define SCREENX	  40
-#  define SCREENY	  25
+#  define SCREENX     40
+#  define SCREENY     25
 #  define NOCOLORS
 #  define NOBGCOLORS
 #  define NOJOYSTICKS
@@ -241,8 +241,8 @@ hiscore screen
 #  error "BBC is missing some library support - FIXME!"
 
 #elif defined(__ATMOS__)
-#  define SCREENX	  38
-#  define SCREENY	  28
+#  define SCREENX     38
+#  define SCREENY     28
 #  define NOCOLORS
 #  define NOBGCOLORS
 #  define NOJOYSTICKS
@@ -255,8 +255,8 @@ hiscore screen
 
 #elif defined(__LUNIX__)
 // that ok ?
-#  define SCREENX	  40
-#  define SCREENY	  25
+#  define SCREENX     40
+#  define SCREENY     25
 #  define NOCOLORS
 #  define NOBGCOLORS
 #  define NOJOYSTICKS
@@ -265,8 +265,8 @@ hiscore screen
 
 #elif defined(__OSA65__)
 // that ok ?
-#  define SCREENX	  40
-#  define SCREENY	  25
+#  define SCREENX     40
+#  define SCREENY     25
 #  define NOCOLORS
 #  define NOBGCOLORS
 #  define NOJOYSTICKS
@@ -274,8 +274,8 @@ hiscore screen
 #  error "OSA65 is missing some library support - FIXME!"
 
 #elif defined(__NES__)
-#  define SCREENX	  (32)
-#  define SCREENY	  (28)
+#  define SCREENX     (32)
+#  define SCREENY     (28)
 
 #  define NOCOLORS
 #  define NOBORDER
@@ -291,20 +291,22 @@ hiscore screen
 
 #  define NOSTARSFX         // FIXME
 #  define NOMELTDOWNFX
+#define MELTDOWNNOBUFFER
 
 //#  define NO2DIMARRAYS
 //#  define NOGLOBALPTRINIT
 
 #elif defined(__PCE__)
-#  define SCREENX	  61
-#  define SCREENY	  28
+#  define SCREENX     61
+#  define SCREENY     28
 
 #  define NOBORDER
 
 #  define NOKBREPEAT
 #  define NOKEYBOARD
 
-#  define NOMELTDOWNFX      // FIXME: gives out of memory
+//#  define NOMELTDOWNFX      // FIXME: gives out of memory
+#define MELTDOWNNOBUFFER
 
 #  define NOQUIT
 
@@ -315,8 +317,8 @@ hiscore screen
 
 /* program too large */
 #elif defined(__GAMATE__)
-#  define SCREENX	  (32)    // FIXME
-#  define SCREENY	  (28)    // FIXME
+#  define SCREENX     (32)    // FIXME
+#  define SCREENY     (28)    // FIXME
 #  define NOCOLORS
 #  define NOBGCOLORS
 #  define NOBORDER
@@ -339,8 +341,8 @@ hiscore screen
 // misc other targets
 
 #elif defined(__GAMEBOY__)
-#  define SCREENX	  (160/8)
-#  define SCREENY	  (144/8)
+#  define SCREENX     (160/8)
+#  define SCREENY     (144/8)
 #  define NOCOLORS
 #  define NOBGCOLORS
 #  define NOBORDER
@@ -360,8 +362,8 @@ hiscore screen
 #undef __GAMEBOY__
 
 #elif defined(__GBA__)
-#  define SCREENX	  (240/8)
-#  define SCREENY	  (160/8)
+#  define SCREENX     (240/8)
+#  define SCREENY     (160/8)
 #  define NOBORDER
 #  define NOKBREPEAT
 #  define NOJOYSELECT
@@ -373,8 +375,8 @@ hiscore screen
 #  define CONIOINIT
 
 #elif defined(__GP32__)
-#  define SCREENX	 ((320/8))
-#  define SCREENY	 ((240/8))
+#  define SCREENX     ((320/8))
+#  define SCREENY      ((240/8))
 #  define NOBGCOLORS
 #  define NOBORDER
 #  define NOKBREPEAT

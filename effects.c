@@ -28,6 +28,73 @@ void flasher(void)
 ***********************************************************************************/
 
 #if !defined(NOMELTDOWNFX)
+
+#if defined(MELTDOWNNOBUFFER)
+/* this is a slightly slower implementation of the effect, which does not use
+   any large RAM buffers */
+void domeltdown(void)
+{
+unsigned char i, x, y, y2;
+unsigned char ch, co, rv;
+unsigned char offs;
+unsigned char yo[SCREENX];
+
+    // first check how many spaces we have at the top
+    for(x = 0; x < SCREENX; ++x) {
+        // skip blanks
+        i = 0;
+        for(y = 0; y < SCREENY; ++y) {
+            gotoxy(x, y);
+            if((cpeekc() == ' ') && (cpeekrevers() == 0)) {
+                ++i;
+            } else {
+                break;
+            }
+        }
+        yo[x] = i;
+    }
+
+    for(i = 0; i < (SCREENY + (SCREENY / 2)); ++i) {
+        waitvsync();
+        flasher();
+#if !defined(NOKEYBOARD)
+        if(kbhit()) {
+            cgetc();
+            break;
+        }
+#endif
+        for(x = 0; x < SCREENX; ++x) {
+            offs = rand() % 3;
+            y2 = (SCREENY - 1) - offs;
+            for(y = (SCREENY - 1); (y > yo[x]) && (y2 >= 0); --y, --y2) {
+                gotoxy(x, y2);
+                ch = cpeekc();
+#ifndef NOCOLORS
+                co = cpeekcolor();
+#endif
+#ifndef NOREVERS
+                rv = cpeekrevers();
+#endif
+                gotoy(y);
+#ifndef NOCOLORS
+                textcolor(co);
+#endif
+#ifndef NOREVERS
+                revers(rv);
+#endif
+                cputc(ch);
+            }
+            if (y < SCREENY) {
+                gotoxy(x, y);
+                revers(0);
+                cputc(' ');
+            }
+            yo[x] += offs;
+        }
+    }
+}
+
+#else
 void domeltdown(void)
 {
 unsigned char *buf;
@@ -40,7 +107,7 @@ unsigned char *ycs[SCREENX];
 unsigned char yc[SCREENX];
 unsigned char yo[SCREENX];
 
-unsigned char x,y;
+unsigned char x, y;
 unsigned char i;
 
 #ifdef NOCOLORS
@@ -105,7 +172,7 @@ unsigned char i;
         }
 
     }
-    
+
     for(i = 0; i < (SCREENY * 5); ++i) {
         waitvsync();
         flasher();
@@ -163,6 +230,8 @@ unsigned char i;
 
     free(buf);
 }
+#endif
+
 #endif // NOMELTDOWNFX
 
 
