@@ -112,7 +112,7 @@ unsigned char c, j;
 #endif // CONIODYNSIZE
 
             cprintf("plr %d:",i + 1);
-            if((type == 1) & (i < numjoysticks)) { // FIXME: the & smells like a bug/typo
+            if((type == 1) && (i < numjoysticks)) {
                 cprintf("joystick %d", i + 1);
             } else {
 #if !defined (NOKEYBOARD)
