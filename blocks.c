@@ -1,5 +1,5 @@
 #if !defined(NO2DIMARRAYS)
-const BLOCK blk2_1={
+const BLOCK blk2_1 = {
 2,
 {
  {
@@ -18,7 +18,7 @@ const BLOCK blk2_1={
 
 };
 
-const BLOCK blk3_1={
+const BLOCK blk3_1 = {
 3,
 {
  {
@@ -41,7 +41,7 @@ const BLOCK blk3_1={
 
 };
 
-const BLOCK blk3_2={
+const BLOCK blk3_2 = {
 3,
 {
  {
@@ -65,7 +65,7 @@ const BLOCK blk3_2={
 };
 
 
-const BLOCK blk4_1={
+const BLOCK blk4_1 = {
 4,
 {
  {
@@ -94,7 +94,7 @@ const BLOCK blk4_1={
 
 #else
 
-const BLOCK blk2_1={
+const BLOCK blk2_1 = {
 2,
 {
   1,1,
@@ -116,7 +116,7 @@ const BLOCK blk2_1={
 
 };
 
-const BLOCK blk3_1={
+const BLOCK blk3_1 = {
 3,
 {
   0,1,0,
@@ -142,7 +142,7 @@ const BLOCK blk3_1={
 
 };
 
-const BLOCK blk3_2={
+const BLOCK blk3_2 = {
 3,
 {
 
@@ -170,7 +170,7 @@ const BLOCK blk3_2={
 };
 
 
-const BLOCK blk4_1={
+const BLOCK blk4_1 = {
 4,
 {
 
@@ -200,7 +200,7 @@ const BLOCK blk4_1={
 #endif
 
 #if !defined (NOGLOBALPTRINIT)
-const BLOCK *myblocks[MAX_BLOCKS]=
+const BLOCK *myblocks[MAX_BLOCKS] =
 {
 	&blk2_1,
 	&blk3_1,
@@ -210,4 +210,3 @@ const BLOCK *myblocks[MAX_BLOCKS]=
 #else
 const BLOCK *myblocks[MAX_BLOCKS];
 #endif
- 

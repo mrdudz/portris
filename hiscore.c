@@ -77,8 +77,8 @@ char p, i, ii, c, blink;
                 c = ii = 0;
                 while(c != CH_ENTER) {
                     textcolor(COLOR_WHITE);
-                    cclearxy(((SCREENX-22)/2)+6,6+i,HS_NAMELEN+1);
-                    cputsxy(((SCREENX-22)/2)+6,6+i,hiscorelist[i].name);
+                    cclearxy(((SCREENX - 22) / 2) + 6, 6 + i, HS_NAMELEN + 1);
+                    cputsxy(((SCREENX - 22) / 2) + 6, 6 + i, hiscorelist[i].name);
 
                     do {
                         waitvsync();

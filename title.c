@@ -5,7 +5,7 @@
     Title Screen
 ***********************************************************************************/
 
-const unsigned char *titlestrings[]=
+const unsigned char *titlestrings[] =
 {
    //12345678901234567890123456789012345678901234567890
     "  #####                   ##            ##      ",
@@ -18,7 +18,7 @@ const unsigned char *titlestrings[]=
 };
 
    //12345678901234567890
-const unsigned char *menustrings[]=
+const unsigned char *menustrings[] =
 {
 #if !defined(NOKEYBOARD)
     "H show HiScores",
@@ -41,9 +41,9 @@ const unsigned char *menustrings[]=
 #endif
 };
 
-#define MENUITEMS (sizeof(menustrings)/sizeof(unsigned char*))
+#define MENUITEMS (sizeof(menustrings) / sizeof(unsigned char*))
 
-const unsigned char menukeys[MENUITEMS]=
+const unsigned char menukeys[MENUITEMS] =
 {
     'h',
 #if !defined(NOJOYSELECT)
@@ -54,7 +54,7 @@ const unsigned char menukeys[MENUITEMS]=
 #endif
     ' '
 };
-unsigned char menuitem=(MENUITEMS-1);
+unsigned char menuitem = (MENUITEMS - 1);
 
 void title_printstring (unsigned char aaline, unsigned char nr, signed char off)
 {
@@ -63,11 +63,11 @@ void title_printstring (unsigned char aaline, unsigned char nr, signed char off)
     register unsigned char *ptr;
 
     gotoxy (0, aaline);
-    ptr=(unsigned char *) titlestrings[nr];
+    ptr = (unsigned char *) titlestrings[nr];
     if (off > 0) {
         ptr += off;
     }
-    x=0;
+    x = 0;
 
     while (x < (SCREENX)) {
         if (off < 0) {
@@ -85,71 +85,56 @@ void title_printstring (unsigned char aaline, unsigned char nr, signed char off)
 
 void title_printcontroller(unsigned char type)
 {
-unsigned char i,ii,l;
+unsigned char i, ii, l;
 #if !defined (NOKEYBOARD)
-unsigned char c,j;
+unsigned char c, j;
 #endif
 
-    gotoxy(0,TOFFS6);cclear(SCREENX);
-    gotoxy(0,TOFFS6+1);cclear(SCREENX);
+    gotoxy(0, TOFFS6); cclear(SCREENX);
+    gotoxy(0, TOFFS6 + 1); cclear(SCREENX);
 
     // controller info
-    for(i=0,l=0;i<MAX_PLR;++l)
-    {
-        for(ii=0;ii<(SCREENX/20);++ii,++i)
-        {
-            #ifdef CONIODYNSIZE
-
-            gotoxy((ii*20)+2,TOFFS6+l);
-
-            #else
+    for(i = 0, l = 0; i < MAX_PLR; ++l) {
+        for(ii = 0; ii < (SCREENX / 20); ++ii, ++i) {
+#ifdef CONIODYNSIZE
+            gotoxy((ii * 20) + 2, TOFFS6 + l);
+#else
 
             // VOOODOOOO!!! :o)
-            #if SCREENX < 40
-            gotoxy(((SCREENX/2)-10)+(((SCREENX/(SCREENX/(SCREENX/2)))/8)),TOFFS6+l);
-            //gotoxy((ii*20),TOFFS6+l);
-            #elif SCREENX < 80
-            gotoxy((ii*20)+(((SCREENX/(SCREENX/(SCREENX/2)))/8)),TOFFS6+l);
-            //gotoxy((ii*20),TOFFS6+l);
-            #else
-            gotoxy((ii*20)+2,TOFFS6+l);
-            //gotoxy((ii*20),TOFFS6+l);
-            #endif
+#if SCREENX < 40
+            gotoxy(((SCREENX / 2) - 10) + (((SCREENX / (SCREENX / (SCREENX / 2))) / 8)), TOFFS6 + l);
+#elif SCREENX < 80
+            gotoxy((ii * 20) + (((SCREENX / (SCREENX / (SCREENX / 2))) / 8)), TOFFS6 + l);
+#else
+            gotoxy((ii * 20) + 2, TOFFS6 + l);
+#endif
 
-            #endif
+#endif // CONIODYNSIZE
 
-            cprintf("plr %d:",i+1);
-            if((type==1)&(i<numjoysticks))
-            {
-                cprintf("joystick %d",i+1);
-            }
-            else
-            {
-            #if !defined (NOKEYBOARD)
-                for(j=0;j<4;++j)
-                {
-                    #if !defined (NO2DIMARRAYS)
-                    c=joykeys[i][j];
-                    #else
-                    c=joykeys[(i*4)+j];
-                    #endif
-                    if(c==' ')
-                    {
+            cprintf("plr %d:",i + 1);
+            if((type == 1) & (i < numjoysticks)) { // FIXME: the & smells like a bug/typo
+                cprintf("joystick %d", i + 1);
+            } else {
+#if !defined (NOKEYBOARD)
+                for(j = 0; j < 4; ++j) {
+#if !defined (NO2DIMARRAYS)
+                    c = joykeys[i][j];
+#else
+                    c = joykeys[(i * 4) + j];
+#endif
+                    if(c == ' ') {
                         cputs("space");
-                    }
-                    else
-                    {
+                    } else {
                         cputc(c);
                     }
                     cputc(' ');
                 }
-            #else
+#else
                 cputs("n/a");
-            #endif
+#endif
             }
         }
     }
-
 }
 
 // print the title screen
@@ -158,7 +143,7 @@ unsigned char title (void)
 unsigned char i;
 static unsigned char cnt;
 static unsigned char ccnt;
-signed char loff=0;
+signed char loff = 0;
 #if !defined(NOKEYBOARD)
 unsigned char c;
 #endif
@@ -172,33 +157,33 @@ unsigned char c;
 
     gotoxy(0,TOFFS2);
 
-    cprintf("v%s ",VERSION);
+    cprintf("v%s ", VERSION);
 #if !defined(NOTVMODE)
-    if(get_tv()==TV_NTSC) {
+    if(get_tv() == TV_NTSC) {
         cputs("(ntsc)");
     } else {
         cputs("(pal)");
     }
 #endif
-    cprintf(", %d players",MAX_PLR);
+    cprintf(", %d players", MAX_PLR);
 
     textcolor(COLOR_WHITE);
     // copyright
-    gotoxy(0,TOFFS5);
+    gotoxy(0, TOFFS5);
     cputs_c("(w) 2002-2020 by Groepaz/Solution");
 
+#else // !CONIODYNSIZE
+
+#if SCREENX > 23
+    gotoxy((SCREENX - 24) / 2, TOFFS2);
+#elif SCREENX > 17
+    gotoxy((SCREENX - 17) / 2, TOFFS2);
 #else
+    gotoxy(0, TOFFS2);
+#endif
 
-    #if SCREENX > 23
-    gotoxy((SCREENX-24)/2,TOFFS2);
-    #elif SCREENX > 17
-    gotoxy((SCREENX-17)/2,TOFFS2);
-    #else
-    gotoxy(0,TOFFS2);
-    #endif
-
-    #if SCREENX > 23
-    cprintf("v%s ",VERSION);
+#if SCREENX > 23
+    cprintf("v%s ", VERSION);
 #if !defined(NOTVMODE)
     if(get_tv() == TV_NTSC) {
         cputs("(ntsc)");
@@ -206,10 +191,10 @@ unsigned char c;
         cputs("(pal)");
     }
 #endif
-    cprintf(", %d players",MAX_PLR);
-    #elif SCREENX > 17
+    cprintf(", %d players", MAX_PLR);
 
-    cprintf("v%s",VERSION);
+#elif SCREENX > 17
+    cprintf("v%s", VERSION);
 #if !defined(NOTVMODE)
     if(get_tv() == TV_NTSC) {
         cputs("(ntsc)");
@@ -217,153 +202,133 @@ unsigned char c;
         cputs("(pal)");
     }
 #endif
-    cprintf(",%dplr",MAX_PLR);
+    cprintf(",%dplr", MAX_PLR);
 
-    #endif
-
-
+#endif
 
     textcolor(COLOR_WHITE);
     // copyright
-     gotoxy(0,TOFFS5);
-    #if SCREENX < 26
+    gotoxy(0, TOFFS5);
+#if SCREENX < 26
            /*1234567890123456789012345*/
     cputs_c("(w)'03-'20 by GPZ/TSN");
-    #else
+#else
            /*123456789012345678901234567890*/
     cputs_c("(w) 2003-2020 by Groepaz/Solution");
-    #endif
+#endif
 
-    #endif
+#endif
 
-     gotoxy(0,TOFFS5+1);
+    gotoxy(0, TOFFS5 + 1);
            /*123456789012345678901234567890*/
     cputs_c("all rights reversed");
 
     textcolor(COLOR_YELLOW);
     title_printcontroller(usejoysticks);
 
-    while (1)
-    {
-            cnt = ccnt;
-            ++ccnt;
-            waitvsync();
-            flasher();
-            // portris logo
-               for(i=0;i<7;++i)
-               {
-                          textcolor(colortable[cnt&0xf]);
-                          title_printstring(TOFFS1+i,i,loff);
-                    ++cnt;
-             }
+    while (1) {
+        cnt = ccnt;
+        ++ccnt;
+        waitvsync();
+        flasher();
 
-               if (--loff == -SCREENX)
-            {
-                 // must match length of one line in the logo
-                 loff = 48;
-            }
+        // portris logo
+        for(i = 0; i < 7; ++i) {
+            textcolor(colortable[cnt & 0xf]);
+            title_printstring(TOFFS1 + i, i, loff);
+            ++cnt;
+        }
 
-            // print menu items
+        if (--loff == -SCREENX) {
+            // must match length of one line in the logo
+            loff = 48;
+        }
 
-            textcolor(COLOR_WHITE);
+        // print menu items
 
-            for(i=0;i<MENUITEMS;++i)
-            {
-                gotoxy(0,TOFFS3+i);
-                if(i==menuitem)
-                {
-                    textcolor(COLOR_YELLOW);
+        textcolor(COLOR_WHITE);
 
-                    if((ccnt&0x08)==0x08)
-                    {
-                            revers(1);
-                            cputs_c(menustrings[i]);
-                            revers(0);
-                    }
-                    else
-                    {
-#ifdef NOREVERS
-                            cclear(SCREENX);
-#else
-                            cputs_c(menustrings[i]);
-#endif
-                    }
-                    textcolor(COLOR_WHITE);
+        for(i = 0; i < MENUITEMS; ++i) {
+            gotoxy(0, TOFFS3 + i);
+            if(i == menuitem) {
+                textcolor(COLOR_YELLOW);
 
-                }
-                else
-                {
+                if((ccnt & 0x08) == 0x08) {
+                    revers(1);
                     cputs_c(menustrings[i]);
+                    revers(0);
+                } else {
+#ifdef NOREVERS
+                    cclear(SCREENX);
+#else
+                    cputs_c(menustrings[i]);
+#endif
                 }
-            }
+                textcolor(COLOR_WHITE);
 
-            // do background flashing
-
-               if((ccnt&0x7f)==0)
-            {
-                flashit(15);
+            } else {
+                cputs_c(menustrings[i]);
             }
+        }
+
+        // do background flashing
+
+        if((ccnt & 0x7f) == 0) {
+            flashit(15);
+        }
 
 #if !defined(NOKEYBOARD)
-            if(kbhit())
-            {
+        if(kbhit()) {
 #ifdef NOLOWERCASE
-                c = tolower(cgetc());
+            c = tolower(cgetc());
 #else
-                c = cgetc();
-#endif                
-                switch(c)
-                {
+            c = cgetc();
+#endif
+            switch(c) {
 
 #if !defined(NOJOYSELECT)
-                    case 'c':
+                case 'c':
 #endif
-                    case ' ':
-                    case 'q':
-                    case 'h':
-                        domeltdown();
-                        return(c);
-                    default:
-                        break;
-                }
+                case ' ':
+                case 'q':
+                case 'h':
+                    domeltdown();
+                    return(c);
+                default:
+                    break;
             }
-            else
+        }
+        else
 #endif // NOKEYBOARD
-            {
+        {
 #if !defined (NOJOYSTICKS)
 
-                poll_controller();
-                for(i=0;i<MAX_PLR;++i)
-                {
-                    switch(pf[i].key)
-                    {
-                        case TKEY_DROP:
-                            if(menuitem<(MENUITEMS-1))
-                            {
-                                ++menuitem;
-                            }
-                            break;
-                        case TKEY_UP:
-                            if(menuitem>0)
-                            {
-                                --menuitem;
-                            }
-                            break;
-                        case TKEY_ROTATE:
-                                domeltdown();
-                                return(menukeys[menuitem]);
-                            break;
-                    }
-
+            poll_controller();
+            for(i = 0; i < MAX_PLR; ++i) {
+                switch(pf[i].key) {
+                    case TKEY_DROP:
+                        if(menuitem < (MENUITEMS - 1)) {
+                            ++menuitem;
+                        }
+                        break;
+                    case TKEY_UP:
+                        if(menuitem > 0) {
+                            --menuitem;
+                        }
+                        break;
+                    case TKEY_ROTATE:
+                        domeltdown();
+                        return(menukeys[menuitem]);
+                        break;
                 }
-#endif // NOJOYSTICKS
+
             }
+#endif // NOJOYSTICKS
+        }
 
-    #if defined(CONIOUPDATE)
+#if defined(CONIOUPDATE)
     conio_update();
-    #endif
-
-
+#endif
     }
 
     return ' '; /* this should never happen */

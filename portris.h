@@ -9,17 +9,15 @@
 
 #include "target.h"
 
-//#define CHARINDEX(_a)    (int)(_a)
 #define CHARINDEX(_a)    (_a)
 
-#define GET1DIM(_a,_x) _a[CHARINDEX(_x)]
+#define GET1DIM(_a, _x) _a[CHARINDEX(_x)]
 
 #if !defined (NO2DIMARRAYS)
-#define GET2DIM(_a,_y,_x,_nx) _a[CHARINDEX(_y)][CHARINDEX(_x)]
+#define GET2DIM(_a, _y, _x, _nx) _a[CHARINDEX(_y)][CHARINDEX(_x)]
 #else
-#define GET2DIM(_a,_y,_x,_nx) _a[((int)_y*(int)_nx)+(int)_x]
+#define GET2DIM(_a, _y, _x, _nx) _a[((int)(_y) * (int)(_nx)) + (int)(_x)]
 #endif
-
 
 ///////////////////////////////////////////////////////////////////////////
 // nullify some functions that would otherwhise just waste memory
@@ -110,17 +108,16 @@
 
 // size of playfield in characters
 #define PF_X     9
-#define PF_Y    ((SCREENY)-4)
+#define PF_Y    ((SCREENY) - 4)
 // size of virtual playfield in characters
-#define PF_VX    ((PF_X)+3+3)
-#define PF_VY    ((PF_Y)+3+3)
+#define PF_VX    ((PF_X) + 3 + 3)
+#define PF_VY    ((PF_Y) + 3 + 3)
 
 // adjust number of players to screen width
-#define MAX_PLR      ((SCREENX)/(PF_X+1))
+#define MAX_PLR      ((SCREENX) / (PF_X + 1))
 
 // define the shape of the blocks
 #ifdef NOREVERS
-//    #define BLK_SET  '#'
     #define BLK_SET  'O'
 #else
     #define BLK_SET  ' '
@@ -129,7 +126,6 @@
 #define BLK_NONE ' '
 
 // lines needed to complete a stage, usually 25
-//#  define LINES_PER_STAGE 1
 #  define LINES_PER_STAGE 25
 
 // color to use for background, ie usually black

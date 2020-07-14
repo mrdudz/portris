@@ -59,7 +59,7 @@ typedef struct
 #if !defined(NO2DIMARRAYS)
     unsigned char blk [PF_VY][PF_VX];
 #else
-    unsigned char blk [PF_VY*PF_VX];
+    unsigned char blk [PF_VY * PF_VX];
 #endif
 } PLAYFIELD;
 
@@ -71,9 +71,9 @@ typedef struct
 {
     unsigned char size;
 #if !defined(NO2DIMARRAYS)
-    unsigned char map [4][4*4];
+    unsigned char map [4][4 * 4];
 #else
-    unsigned char map [4*4*4];
+    unsigned char map [4 * 4 * 4];
 #endif
 } BLOCK;
 
@@ -504,7 +504,7 @@ register unsigned char *blocks;
 void update_score(PLAYFIELD *pf,unsigned char score)
 {
     pf->score += score;
-    gotoxy(pf->px + 4,PF_Y + 1);
+    gotoxy(pf->px + 4, PF_Y + 1);
     textcolor(COLOR_YELLOW);
     cprintf("%05d", pf->score);
 }
@@ -537,7 +537,7 @@ void update_lines(PLAYFIELD *pf, unsigned char lines)
     textcolor(COLOR_YELLOW);
     cprintf("%2d/%2d", LINES_PER_STAGE - pf->lines, LINES_PER_STAGE);
     // each line gives 10 points, plus 1 for the block
-    update_score(pf, (10*lines) + 1);
+    update_score(pf, (10 * lines) + 1);
 
 }
 

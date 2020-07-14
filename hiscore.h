@@ -9,7 +9,7 @@
 
 typedef struct
 {
-    char name[HS_NAMELEN+1];
+    char name[HS_NAMELEN + 1];
     unsigned int score;
     unsigned int lines;
     unsigned int stage;
