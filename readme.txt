@@ -264,6 +264,11 @@ bugs:
   should have been cleared, this will happen when the next block is dropped
 - the available joystick drives should be read from disk instead of using the
   hardcoded c64 specific list
+- on some targets (eg apple2) using keyboard and joystick at the same time is
+  not practical
+- on some targets (eg apple2) an unconnected joystick does not report "neutral"
+  position, because of that it should be possible to use less than the avail.
+  able number of joysticks
 
 More Ports?
 

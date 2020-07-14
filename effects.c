@@ -6,7 +6,7 @@
 #if !defined(NOBGCOLOR)
 static unsigned char flashing = 0xff;
 
-void flashit(unsigned char n)
+void flashit(unsigned char n) 
 {
     flashing = n;
 }
@@ -14,11 +14,11 @@ void flashit(unsigned char n)
 void flasher(void) 
 {
     if(flashing == 0xff) {
-        bgcolor(COL_BG);bordercolor(COL_BG);
+        bgcolor(COL_BG); bordercolor(COL_BG);
     } else {
         bgcolor(colortable[flashing]);
         bordercolor(colortable[flashing]);
-        flashing--;
+        --flashing;
     }
 }
 #endif
@@ -43,70 +43,69 @@ unsigned char yo[SCREENX];
 unsigned char x,y;
 unsigned char i;
 
-    #ifdef NOCOLORS
-    b=buf=(unsigned char*)calloc(SCREENX*SCREENY, 1);
-    #else
-    b=buf=(unsigned char*)calloc(2*SCREENX*SCREENY, 1);
-    cb=&buf[(SCREENX*SCREENY)];
-    #endif
-
+#ifdef NOCOLORS
+    b = buf = (unsigned char*)calloc(SCREENX * SCREENY, 1);
+#else
+    b = buf = (unsigned char*)calloc(2 * SCREENX * SCREENY, 1);
+    cb = &buf[SCREENX * SCREENY];
+#endif
 
     /* abort if we couldnt allocated memory */
-    if(b == NULL)    {
+    if(b == NULL) {
         clrscr();
-        #ifdef DEBUG
-        textcolor(COLOR_WHITE);bgcolor(COLOR_BLACK);
+#ifdef DEBUG
+        textcolor(COLOR_WHITE);
+        bgcolor(COLOR_BLACK);
         cputs("out of memory!\n\r(domeltdown)");
 
-        while(1){conio_update();};
-        #endif
+        while(1) {
+            conio_update();
+        };
+#endif
         return;
     }
 
-    for(x=0;x<SCREENX;++x)
-    {
-        ys[x]=b;
-        #ifndef NOCOLORS
-        ycs[x]=cb;
-        #endif
+    // first prepare the buffers
+    for(x = 0; x < SCREENX; ++x) {
+        ys[x] = b;
+#ifndef NOCOLORS
+        ycs[x] = cb;
+#endif
 
-        yc[x]=x&5;
-        yo[x]=0;
+        yc[x] = x & 5;
+        yo[x] = 0;
 
         // skip blanks
-        for(y=0;y<SCREENY;y++)
-        {
-            #ifndef NOCOLORS
-            ++cb;
-            #endif
-
-            gotoxy(x,y);
-            if((*b=cpeekc())==' ') {
+        for(y = 0; y < SCREENY; ++y) {
+            gotoxy(x, y);
+            if((*b = cpeekc()) == ' ') {
                 ++b;
-
+#ifndef NOCOLORS
+                ++cb;
+#endif
                 ++yo[x];
                 ++ys[x];
-                #ifndef NOCOLORS
-                    ++ycs[x];
-                #endif
+#ifndef NOCOLORS
+                ++ycs[x];
+#endif
             } else {
-                ++b;
                 break;
             }
         }
         // copy rest of column
-        for(;y<SCREENY;++y) {
-            gotoxy(x,y);
-            *b=cpeekc();
+        for(; y < SCREENY; ++y) {
+            gotoxy(x, y);
+            *b = cpeekc();
             ++b;
-            #ifndef NOCOLORS
-            gotoxy(x,y);
-            *cb=cpeekcolor();++cb;
-            #endif
+#ifndef NOCOLORS
+            gotoxy(x, y);
+            *cb = cpeekcolor();
+            ++cb;
+#endif
         }
 
     }
-
+    
     for(i = 0; i < (SCREENY * 5); ++i) {
         waitvsync();
         flasher();
@@ -115,63 +114,53 @@ unsigned char i;
             break;
         }
 
-        for(x=0;x<SCREENX;++x)
-        {
-            if(yo[x]<SCREENY)
-            {
-                if(yc[x]==0)
-                {
-                    b=ys[x];
-                    #ifndef NOCOLORS
-                    cb=ycs[x];
-                    #endif
-
-                    #ifdef CONIOSCROLLS
-                    if(x==(SCREENX-1))
-                    {
-                        for(y=yo[x];y<(SCREENY-1);++y)
-                        {
-                            #ifndef NOCOLORS
-                            textcolor(*cb);++cb;
-                            #endif
-                            cputcxy(x,y,*b);
+        for(x = 0; x < SCREENX; ++x) {
+            if(yo[x] < SCREENY) {
+                if(yc[x] == 0) {
+                    b = ys[x];
+#ifndef NOCOLORS
+                    cb = ycs[x];
+#endif
+                    cputcxy(x, yo[x], ' ');
+                    ++yo[x];
+#ifdef CONIOSCROLLS
+                    if(x == (SCREENX - 1)) {
+                        for(y = yo[x]; y < (SCREENY - 1); ++y) {
+#ifndef NOCOLORS
+                            textcolor(*cb);
+                            ++cb;
+#endif
+                            cputcxy(x, y , *b);
                             ++b;
                         }
+                    } else {
+#endif
+
+                        for(y = yo[x]; y < SCREENY; ++y) {
+#ifndef NOCOLORS
+                            textcolor(*cb);
+                            ++cb;
+#endif
+                            cputcxy(x, y, *b);
+                            ++b;
+                        }
+
+#ifdef CONIOSCROLLS
                     }
-                    else
-                    {
-                    #endif
-
-                    for(y=yo[x];y<SCREENY;++y) {
-                        #ifndef NOCOLORS
-                        textcolor(*cb);++cb;
-                        #endif
-                        cputcxy(x,y,*b);++b;
-                    }
-
-                    #ifdef CONIOSCROLLS
-                    }
-                    #endif
-
-
-                    cputcxy(x,yo[x],' ');
-                    ++yo[x];
-                    yc[x]=1+(rand()%3);
-                }
-                else
-                {
+#endif
+                    yc[x] = 1 + (rand()%3);
+                } else {
                     --yc[x];
                 }
             }
         }
-    #if defined(CONIOUPDATE)
+#if defined(CONIOUPDATE)
     conio_update();
-    #endif
+#endif
 
     }
 
     free(buf);
-
 }
 #endif // NOMELTDOWNFX
 
@@ -221,14 +210,14 @@ unsigned char c, n;
 static int i;
 
     for (n = 0; n < STARSPERFRAME; ++n) {
-        i++;
-        if(i == NUMSTARS) {
+        ++i;
+        if (i == NUMSTARS) {
             i = 0;
         }
 
         c = starc[i];
-        if(c < 8) {
-            gotoxy(starx[i],stary[i]);
+        if (c < 8) {
+            gotoxy(starx[i], stary[i]);
             if(cpeekc() == starchars[(c - 1) & 7]) {
                 gotoxy(starx[i], stary[i]);
                 textcolor(starcolors[c]);
