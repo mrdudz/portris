@@ -311,6 +311,8 @@ hiscore screen
 #  define STATICJOYDRV
 #  define NOJOYSELECT
 
+#  define register          // zeropage is kindof special on PCE
+
 /* program too large */
 #elif defined(__GAMATE__)
 #  define SCREENX	  (32)    // FIXME
