@@ -178,16 +178,21 @@ hiscore screen
 #elif defined(__GEOS__)
 #  define SCREENX	  40
 #  define SCREENY	  25
+
 #  define NOCOLORS
 #  define NOBGCOLORS
-#  define NOJOYSTICKS       // FIXME: why is that so?
 #  define NOKBREPEAT
 #  define NOCLOCK
+#  define NOREVERS
 
 #  define NOWAITVBLANK      // FIXME: missing in cc65 lib
 #  define NOSTARSFX
 #  define NOMELTDOWNFX
 #  define NOJOYSELECT
+#  define NOJOYSTICKS       // FIXME: why is that so?
+
+#define NOHISCORES
+#define NOTITLESCREEN
 
 /* other cc65 targets */
 #elif defined(__APPLE2ENH__)

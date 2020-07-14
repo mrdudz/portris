@@ -203,8 +203,7 @@ geos: portris_geos.cvt
 
 geosdisk: geos
 	@echo "geosdisk ..."
-	$(CP) geos.d64.bak geos.d64
-#	$(C1541) -attach geos.d64 -write portris_geos.cvt portris.cvt $(NULLOUT)
+	$(CP) geos-template.d64 geos.d64
 	$(C1541) -attach geos.d64 -geoswrite portris_geos.cvt
 
 apple2: $(SOURCEFILES)
@@ -315,11 +314,11 @@ clean:
 	$(DEL) portris*.gxb
 	$(DEL) portris*.tap
 	$(DEL) portris*.atr
+	$(DEL) portris*.d64
+	$(DEL) portris*.dsk
 	$(DEL) *.o
 	$(DEL) *.lst
 	$(DEL) *.map
-	$(DEL) *.d64
-	$(DEL) portris*.dsk
 
 #########################################################################################
 #   some stuff for lazy peeps like me :o)
@@ -340,7 +339,7 @@ runc6480: c6480
 #	$(X64SC) --autostart portris_c64_80x25.prg
 	$(X64SC) -8 portris.d64 -keybuf \\x4c\\xcf\\x22\\x2a\\x22\\x2c\\x38\\x3a\\x83
 rungeos: geos geosdisk
-	$(X64SC) --autostart geos.d64
+	$(X64SC) -joydev1 1 -joydev2 0 --autostart geos.d64
 
 runc128: c128
 #	$(X128) --autostart portris_c128.prg > $(DEVNULL)
