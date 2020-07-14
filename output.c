@@ -1,9 +1,9 @@
 
 /* output a string centered in the given line */
-void cputsy_c(unsigned char y, register const char *ptr)
+void __fastcall__ cputsy_c(unsigned char y, const char *ptr)
 {
-    register unsigned char x = 0;
-    register unsigned char c;
+    unsigned char x = 0;
+    unsigned char c;
 
     if((c = strlen(ptr)) < SCREENX) {
         x = (SCREENX - c) / 2;
@@ -21,7 +21,7 @@ void cputsy_c(unsigned char y, register const char *ptr)
 }
 
 /* output a string centered in the current line */
-void cputs_c(register const char *ptr)
+void __fastcall__ cputs_c(const char *ptr)
 {
     cputsy_c(wherey(), ptr);
 }
