@@ -124,23 +124,23 @@ static clock_t ticks;
 
 void ticks_reset(void)
 {
-    ticks=0;
+    ticks = 0;
 }
 
 void ticks_do(void)
 {
     // add elapsed time from timer api here
-    #ifdef NOCLOCK
-    ticks+=300;
-    #else
-static clock_t clk,lclk,clocks;
+#ifdef NOCLOCK
+    ticks += 300;
+#else
+static clock_t clk, lclk, clocks;
 
-    clk=clock();
-    clocks=clk-lclk;
-    lclk=clk;
+    clk = clock();
+    clocks = clk - lclk;
+    lclk = clk;
 
-    ticks+=((clocks/(1+(CLOCKS_PER_SEC/50)))*256);
-    #endif
+    ticks += (1 + ((clocks * 256) / (CLOCKS_PER_SEC / 50)));
+#endif
 }
 
 clock_t ticks_get(void)

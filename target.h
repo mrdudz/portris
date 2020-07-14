@@ -291,18 +291,15 @@ hiscore screen
 //#  define NOGLOBALPTRINIT
 
 #elif defined(__PCE__)
-#  define SCREENX	  (512/8)
-#  define SCREENY	  (224/8)
+#  define SCREENX	  61
+#  define SCREENY	  28
 
 #  define NOBORDER
 
 #  define NOKBREPEAT
 #  define NOKEYBOARD
 
-#  define NOMELTDOWNFX
-#  define NOSTARSFX
-
-#  define NOCLOCK           // FIXME
+#  define NOMELTDOWNFX      // FIXME: gives out of memory
 
 #  define NOQUIT
 

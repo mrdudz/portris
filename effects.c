@@ -109,11 +109,12 @@ unsigned char i;
     for(i = 0; i < (SCREENY * 5); ++i) {
         waitvsync();
         flasher();
+#if !defined(NOKEYBOARD)
         if(kbhit()) {
             cgetc();
             break;
         }
-
+#endif
         for(x = 0; x < SCREENX; ++x) {
             if(yo[x] < SCREENY) {
                 if(yc[x] == 0) {
