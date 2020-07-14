@@ -195,7 +195,6 @@ hiscore screen
 #  define SCREENX	  40
 #  define SCREENY	  24
 
-#  define NOLOWERCASE
 #  define NOCOLORS
 #  define NOBGCOLORS
 #  define NOKBREPEAT
