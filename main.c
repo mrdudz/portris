@@ -50,16 +50,17 @@ typedef struct
     unsigned char nc,nn;
     unsigned char gameover;     // game over flag
     unsigned char key;          // last input "key"
+    unsigned char lastkey;
     clock_t lasttick;    // used for syncing
     clock_t delayticks;    // used for syncing
     unsigned char lines,stage;
     unsigned short score;
     // playfield grid data
-    #if !defined(NO2DIMARRAYS)
+#if !defined(NO2DIMARRAYS)
     unsigned char blk [PF_VY][PF_VX];
-    #else
+#else
     unsigned char blk [PF_VY*PF_VX];
-    #endif
+#endif
 } PLAYFIELD;
 
 PLAYFIELD pf[MAX_PLR];
@@ -69,12 +70,11 @@ PLAYFIELD pf[MAX_PLR];
 typedef struct
 {
     unsigned char size;
-    #if !defined(NO2DIMARRAYS)
+#if !defined(NO2DIMARRAYS)
     unsigned char map [4][4*4];
-    #else
+#else
     unsigned char map [4*4*4];
-    #endif
-//    unsigned char map [4][];
+#endif
 } BLOCK;
 
 #define MAX_BLOCKS 4
@@ -157,56 +157,28 @@ void block_set(PLAYFIELD *pf, register unsigned char col)
 const BLOCK *blk;
 register unsigned char *blocks;
 register unsigned char *block;
-unsigned char x,y,size;
-unsigned char bx,by;
+unsigned char x, y, size;
+unsigned char bx, by;
 
-    //blk=myblocks[pf->bn];
-    blk=GET1DIM(myblocks,pf->bn);
+    blk = GET1DIM(myblocks, pf->bn);
+    size = blk->size;
 
-    size=blk->size;
+    block = (unsigned char*)&GET2DIM(blk->map, pf->br, 0, 16);
 
+    bx = pf->bx + 3;
+    by = pf->by;
 
-// #if !defined (NO2DIMARRAYS)
-//     block=&blk->map[pf->br][0];
-//     #else
-//     block=&blk->map[(pf->br*16)+0];
-//     #endif
+    blocks = &GET2DIM(pf->blk, by, bx, PF_VX);
 
-    //block=(unsigned char*)&(blk->map[pf->br][0]);
-    //test=blk->map[pf->br][0];
-    block=(unsigned char*)&GET2DIM(blk->map,pf->br,0,16);
-
-    bx=pf->bx+3;by=pf->by;
-
-//     #if defined(__SDCC__)
-//     /* neither lcc nor sdcc would compile the latter */
-//     {
-//     //int i=(by*PF_VX)+bx;
-//     //blocks=pf->blk+i;
-//     blocks=&pf->blk[(int)by][(int)bx];
-//     }
-//     #else
-//         #if !defined (NO2DIMARRAYS)
-//         blocks=&pf->blk[by][bx];
-//         #else
-//         blocks=&pf->blk[((int)by*(int)PF_VX)+(int)bx];
-//         #endif
-//     #endif
-
-    blocks=&GET2DIM(pf->blk,by,bx,PF_VX);
-
-    for(y=0;y<size;++y)
-    {
-                        for(x=0;x<size;++x)
-                        {
-                                if(*block)
-                                {
-                                    *blocks=col;
-                                }
-                            ++block;
-                            ++blocks;
-                        }
-                        blocks+=(PF_VX-size);
+    for(y = 0; y < size; ++y) {
+        for(x = 0; x < size; ++x) {
+            if(*block) {
+                *blocks = col;
+            }
+            ++block;
+            ++blocks;
+        }
+        blocks += (PF_VX - size);
     }
 
 }
@@ -216,167 +188,91 @@ void block_unset(PLAYFIELD *pf)
 const BLOCK *blk;
 register unsigned char *blocks;
 register unsigned char *block;
-unsigned char x,y,size;
-unsigned char bx,by;
+unsigned char x, y, size;
+unsigned char bx, by;
 
-    //blk=myblocks[pf->bn];
-    blk=GET1DIM(myblocks,pf->bn);
+    blk = GET1DIM(myblocks, pf->bn);
+    size = blk->size;
 
+    block = (unsigned char*)&GET2DIM(blk->map, pf->br, 0, 16);
 
-    size=blk->size;
+    bx = pf->bx + 3;
+    by = pf->by;
 
-//     #if !defined (NO2DIMARRAYS)
-//     block=&blk->map[pf->br][0];
-//     #else
-//     block=&blk->map[(pf->br*16)+0];
-//     #endif
+    blocks = &GET2DIM(pf->blk, by, bx, PF_VX);
 
-    block=(unsigned char*)&GET2DIM(blk->map,pf->br,0,16);
-
-    bx=pf->bx+3;by=pf->by;
-
-//     #if defined(__SDCC__)
-//     /* neither lcc nor sdcc would compile the latter */
-//     {
-
-//    int i=(by*PF_VX)+bx;
-//    blocks=pf->blk+i;
-
-//     blocks=&pf->blk[(int)by][(int)bx];
-//     }
-//     #else
-//         #if !defined (NO2DIMARRAYS)
-//         blocks=&pf->blk[by][bx];
-//         #else
-//         blocks=&pf->blk[((int)by*(int)PF_VX)+(int)bx];
-//         #endif
-//     #endif
-
-    blocks=&GET2DIM(pf->blk,by,bx,PF_VX);
-
-    for(y=0;y<size;++y)
-    {
-                        for(x=0;x<size;++x)
-                        {
-                                if(*block)
-                                {
-                                    *blocks=NO_BLOCK;
-                                }
-                            ++block;
-                            ++blocks;
-                        }
-                        blocks+=(PF_VX-size);
+    for(y = 0; y < size; ++y) {
+        for(x = 0; x < size; ++x) {
+            if(*block) {
+                *blocks = NO_BLOCK;
+            }
+            ++block;
+            ++blocks;
+        }
+        blocks += (PF_VX - size);
     }
-
 }
 
 // check if block hits any other blocks
-unsigned char block_checkhit_x(PLAYFIELD *pf,unsigned char ox)
+unsigned char block_checkhit_x(PLAYFIELD *pf, unsigned char ox)
 {
 const BLOCK *blk;
 unsigned char *blocks;
 unsigned char *block;
-unsigned char x,y,bx,by,size;
+unsigned char x, y, bx, by, size;
 
-    //blk=myblocks[pf->bn];
-    blk=GET1DIM(myblocks,pf->bn);
+    blk = GET1DIM(myblocks, pf->bn);
+    size = blk->size;
 
-    size=blk->size;
+    block = (unsigned char*)&GET2DIM(blk->map, pf->br, 0, 16);
 
-//     #if !defined (NO2DIMARRAYS)
-//     block=&blk->map[pf->br][0];
-//     #else
-//     block=&blk->map[(pf->br*16)+0];
-//     #endif
+    bx = pf->bx + ox;
+    by = pf->by;
+    blocks = &GET2DIM(pf->blk, by, bx, PF_VX);
 
-    block=(unsigned char*)&GET2DIM(blk->map,pf->br,0,16);
-
-    bx=pf->bx+ox;by=pf->by;
-//     #if defined(__SDCC__)
-//     /* neither lcc nor sdcc would compile the latter */
-//     {
-//     int i=(by*PF_VX)+bx;
-//     blocks=pf->blk+i;
-//     blocks=&pf->blk[(int)by][(int)bx];
-//     }
-//     #else
-//         #if !defined (NO2DIMARRAYS)
-//         blocks=&pf->blk[by][bx];
-//         #else
-//         blocks=&pf->blk[((int)by*(int)PF_VX)+(int)bx];
-//         #endif
-//     #endif
-    blocks=&GET2DIM(pf->blk,by,bx,PF_VX);
-
-
-    for(y=0;y<size;++y)
-    {
-             for(x=0;x<size;++x)
-             {
-                 if(*block++)
-                 {
-                     if(*blocks!=NO_BLOCK) return(1);
-                 }
-                 ++blocks;
-             }
-             blocks+=(PF_VX-size);
+    for(y = 0; y < size; ++y) {
+        for(x = 0; x < size; ++x) {
+            if(*block++) {
+                if(*blocks != NO_BLOCK) {
+                    return 1;
+                }
+            }
+            ++blocks;
+        }
+        blocks += (PF_VX - size);
     }
-    return(0);
+    return 0;
 }
-unsigned char block_checkhit_y(PLAYFIELD *pf,unsigned char oy)
+
+unsigned char block_checkhit_y(PLAYFIELD *pf, unsigned char oy)
 {
 const BLOCK *blk;
 unsigned char *blocks;
 unsigned char *block;
-unsigned char x,y,bx,by,size;
+unsigned char x, y, bx, by, size;
 
-    //blk=myblocks[pf->bn];
-    blk=GET1DIM(myblocks,pf->bn);
+    blk = GET1DIM(myblocks, pf->bn);
+    size = blk->size;
 
-    size=blk->size;
+    block = (unsigned char*)&GET2DIM(blk->map, pf->br, 0, 16);
 
+    bx = pf->bx + 3;
+    by = pf->by + oy;
 
-//     #if !defined (NO2DIMARRAYS)
-//     block=&blk->map[pf->br][0];
-//     #else
-//     block=&blk->map[(pf->br*16)+0];
-//     #endif
+    blocks = &GET2DIM(pf->blk, by, bx, PF_VX);
 
-    block=(unsigned char*)&GET2DIM(blk->map,pf->br,0,16);
-
-    bx=pf->bx+3;
-    by=pf->by+oy;
-
-// /*    #if defined(__SDCC__)
-//     /* neither lcc nor sdcc would compile the latter */
-//     {
-// //    int i=(by*PF_VX)+bx;
-// //    blocks=pf->blk+i;
-//     blocks=&pf->blk[(int)by][(int)bx];
-//     }
-//     #else
-//         #if !defined (NO2DIMARRAYS)
-//         blocks=&pf->blk[by][bx];
-//         #else
-//         blocks=&pf->blk[((int)by*(int)PF_VX)+(int)bx];
-//         #endif
-//     #endif*/
-    blocks=&GET2DIM(pf->blk,by,bx,PF_VX);
-
-
-    for(y=0;y<size;++y)
-    {
-             for(x=0;x<size;++x)
-             {
-                 if(*block++)
-                 {
-                     if(*blocks!=NO_BLOCK) return(1);
-                 }
-                 ++blocks;
-             }
-             blocks+=(PF_VX-size);
+    for(y = 0; y < size; ++y) {
+        for(x = 0; x < size; ++x) {
+            if(*block++) {
+                if(*blocks != NO_BLOCK) {
+                    return 1;
+                }
+            }
+            ++blocks;
+        }
+        blocks += (PF_VX - size);
     }
-    return(0);
+    return 0;
 }
 
 // print next block
@@ -392,16 +288,16 @@ unsigned char x, y, bx, by, size;
 
 #if !defined(NOCOLORS)
 unsigned char col;
-    col = GET1DIM(colortable,pf->nc);
+    col = GET1DIM(colortable, pf->nc);
 #endif
 
-    blk = GET1DIM(myblocks,pf->nn);
+    blk = GET1DIM(myblocks, pf->nn);
     size = blk->size;
 
     block = (unsigned char*)&GET2DIM(blk->map, 0, 0, 16);
 
     bx = pf->px;
-    by = PF_Y+1;
+    by = PF_Y + 1;
 
     for(y = 0; y < 2; ++y) {
         gotoxy(bx, by);
@@ -452,8 +348,8 @@ unsigned char cnt = 0;
     blocks = &GET2DIM(pf->blk, 0, 0, PF_VX);
 
     for(y = 0; y < PF_Y + 3; ++y) {
-        for(x=0;x<3;++x) {
-            *blocks++=1;
+        for(x = 0; x < 3; ++x) {
+            *blocks++ =1;
         }
         for(x = 0; x < PF_X; ++x) {
             if(*blocks == NO_BLOCK) {
@@ -485,12 +381,12 @@ unsigned char x, y;
 unsigned char *blocks;
 unsigned char cnt = 0,lines = 0;
 
-    blocks = &GET2DIM(pf->blk, (PF_Y+2), (PF_X+2), PF_VX);
+    blocks = &GET2DIM(pf->blk, (PF_Y + 2), (PF_X + 2), PF_VX);
 
     for(y = (PF_Y + 2); y > 1;) {
-        cnt=0;
+        cnt = 0;
         for(x = 0; x < PF_X; ++x) {
-            if(*blocks!=NO_BLOCK) {
+            if(*blocks != NO_BLOCK) {
                 ++cnt;
             }
             --blocks;
@@ -553,7 +449,7 @@ register unsigned char *blocks;
 
         px = pf->px;
 
-        for(y = 0; (y < size) & (py < PF_Y); ++y) { // FIXME: the & smells like a bug/type
+        for(y = 0; (y < size) & (py < PF_Y); ++y) { // FIXME: the & smells like a bug/typo
             gotoxy(px,py);
 
             for(x = 0; x < PF_X; ++x) {
@@ -565,7 +461,7 @@ register unsigned char *blocks;
                     revers(1); cputc(BLK_SET); revers(0);
                 }
             }
-            blocks+=6;
+            blocks += 6;
             py++;
         }
     }
@@ -575,7 +471,7 @@ register unsigned char *blocks;
 // update one playfield
 void update_pf_all(PLAYFIELD *pf)
 {
-unsigned char x,y,px,py;
+unsigned char x, y, px, py;
 register unsigned char blk;
 register unsigned char *blocks;
 
@@ -583,7 +479,7 @@ register unsigned char *blocks;
         return;
     }
 
-    px=pf->px; py = 0;
+    px = pf->px; py = 0;
 
     blocks = &GET2DIM(pf->blk, 3, 3, PF_VX);
 
@@ -607,45 +503,41 @@ register unsigned char *blocks;
 
 void update_score(PLAYFIELD *pf,unsigned char score)
 {
-    pf->score+=score;
-    gotoxy(pf->px+4,PF_Y+1);
+    pf->score += score;
+    gotoxy(pf->px + 4,PF_Y + 1);
     textcolor(COLOR_YELLOW);
-    cprintf("%05d",pf->score);
+    cprintf("%05d", pf->score);
 }
 
-void update_stage(PLAYFIELD *pf,unsigned char stage)
+void update_stage(PLAYFIELD *pf, unsigned char stage)
 {
-    pf->stage=stage;
-    if(stage<16)
-    {
-        pf->delayticks=256*(17-stage);
-    }
-    else
-    {
-        pf->delayticks=1;
+    pf->stage = stage;
+    if(stage < 16) {
+        pf->delayticks = 256 * (17 - stage);
+    } else {
+        pf->delayticks = 1;
     }
 
-    gotoxy(pf->px+7,PF_Y+2);
+    gotoxy(pf->px + 7, PF_Y + 2);
     textcolor(COLOR_YELLOW);
-    cprintf("%2d",stage);
+    cprintf("%2d", stage);
 
-    if(stage>1)
-    {
-           // a stage gives 200 points, plus one
+    if(stage > 1) {
+        // a stage gives 200 points, plus one
         // point for each free block
-        update_score(pf,200+clear_pf(pf));
+        update_score(pf, 200 + clear_pf(pf));
     }
 
 }
 
-void update_lines(PLAYFIELD *pf,unsigned char lines)
+void update_lines(PLAYFIELD *pf, unsigned char lines)
 {
-    pf->lines+=lines;
-    gotoxy(pf->px+4,PF_Y+3);
+    pf->lines += lines;
+    gotoxy(pf->px + 4, PF_Y + 3);
     textcolor(COLOR_YELLOW);
-    cprintf("%2d/%2d",LINES_PER_STAGE-pf->lines,LINES_PER_STAGE);
-       // each line gives 10 points, plus 1 for the block
-    update_score(pf,(10*lines)+1);
+    cprintf("%2d/%2d", LINES_PER_STAGE - pf->lines, LINES_PER_STAGE);
+    // each line gives 10 points, plus 1 for the block
+    update_score(pf, (10*lines) + 1);
 
 }
 
@@ -657,10 +549,10 @@ void ingame_init(PLAYFIELD *pf)
 {
 
 #if defined (NOGLOBALPTRINIT)
-    myblocks[0]=&blk2_1;
-    myblocks[1]=&blk3_1;
-    myblocks[2]=&blk3_2;
-    myblocks[3]=&blk4_1;
+    myblocks[0] = &blk2_1;
+    myblocks[1] = &blk3_1;
+    myblocks[2] = &blk3_2;
+    myblocks[3] = &blk4_1;
 #endif
 
     clear_pf(pf);
@@ -671,68 +563,73 @@ void ingame_init(PLAYFIELD *pf)
     block_printnext(pf);
 
     // position new block
-    pf->bx=(PF_X/2);pf->by=0;
+    pf->bx = (PF_X / 2);
+    pf->by = 0;
 
-    pf->score=0;
-    pf->stage=0;
-    pf->lines=0;
+    pf->score = 0;
+    pf->stage = 0;
+    pf->lines = 0;
 
-    pf->gameover=0;
-       update_pf_all(pf);
+    pf->gameover = 0;
+    update_pf_all(pf);
 
-    update_score(pf,0);
-    update_stage(pf,1);
-    update_lines(pf,0);
+    update_score(pf, 0);
+    update_stage(pf, 1);
+    update_lines(pf, 0);
 
 }
 
 void ingame_gameover(PLAYFIELD *pf)
 {
-        textcolor(COLOR_WHITE);
-        cputsxy(pf->px+2,2,"game");
-        cputsxy(pf->px+2,4,"over");
-        cputsxy(pf->px+2,7,"press");
-        cputsxy(pf->px+2,9,"button");
-        pf->gameover=1;
+    textcolor(COLOR_WHITE);
+    cputsxy(pf->px + 2, 2, "game");
+    cputsxy(pf->px + 2, 4, "over");
+    cputsxy(pf->px + 2, 7, "press");
+    cputsxy(pf->px + 2, 9, "button");
+    pf->gameover = 1;
 }
 
 unsigned char dokeys(PLAYFIELD *pf)
 {
-    if(pf->gameover)
-    {
+    if(pf->gameover) {
         // start a new game
-        if(pf->key==TKEY_ROTATE)
-        {
+        if(pf->key == TKEY_ROTATE) {
             ingame_init(pf);
             return(0);
         }
-    }
-    else
-    {
-        switch(pf->key)
-        {
+    } else {
+        switch(pf->key) {
             // move left
             case TKEY_LEFT:
-                    if(!block_checkhit_x(pf,3-1)) --pf->bx;
-                       break;
+                if(!block_checkhit_x(pf, 3 - 1)) {
+                    --pf->bx;
+                }
+                break;
             // move right
             case TKEY_RIGHT:
-                    if(!block_checkhit_x(pf,3+1)) ++pf->bx;
-                       break;
+                if(!block_checkhit_x(pf, 3 + 1)) {
+                    ++pf->bx;
+                }
+                break;
             // rotate
-                 case TKEY_ROTATE:
-                       pf->br = (pf->br + 1) & 3;
-                    if(block_checkhit_x(pf,3))
-                    {
-                           pf->br = (pf->br - 1) & 3;
+            case TKEY_ROTATE:
+                if (pf->lastkey != TKEY_ROTATE) {
+                    pf->br = (pf->br + 1) & 3;
+                    if(block_checkhit_x(pf, 3)) {
+                        pf->br = (pf->br - 1) & 3;
                     }
-                       break;
+                }
+                break;
             // drop
             case TKEY_DROP:
-                    if(!block_checkhit_y(pf,1)) ++pf->by;
-                       break;
+                if(!block_checkhit_y(pf, 1)) {
+                    ++pf->by;
+                }
+                break;
         }
+        pf->lastkey = pf->key;
     }
+
     return(pf->key);
 }
 
@@ -742,14 +639,15 @@ void ingame_dropblock(PLAYFIELD *pf)
 {
 clock_t ticks;
 
-        // get current tick count
-        ticks=ticks_get();
+    // get current tick count
+    ticks = ticks_get();
 
-        if((ticks-pf->lasttick)>(pf->delayticks))
-        {
-            pf->lasttick=ticks;
-            if(!block_checkhit_y(pf,1)) ++pf->by;
+    if((ticks - pf->lasttick) > (pf->delayticks)) {
+        pf->lasttick = ticks;
+        if(!block_checkhit_y(pf, 1)) {
+            ++pf->by;
         }
+    }
 }
 
 
@@ -759,149 +657,124 @@ unsigned char ingame_doplr(PLAYFIELD *pf)
 {
 unsigned char lines;
 
-         if(pf->gameover)
-        {
-            dokeys(pf);
-            if(pf->gameover)
-            {
-                       return(pf->gameover);
-            }
+    if(pf->gameover) {
+        dokeys(pf);
+        if(pf->gameover) {
+            return(pf->gameover);
         }
+    }
 
-        // remove block from playfield
-        block_unset(pf);
+    // remove block from playfield
+    block_unset(pf);
 
-        // move block position according to controller
-        if(dokeys(pf)!=TKEY_DROP)
-        {
-            // move block down in constant speed
-            ingame_dropblock(pf);
-        }
+    // move block position according to controller
+    if(dokeys(pf) != TKEY_DROP) {
+        // move block down in constant speed
+        ingame_dropblock(pf);
+    }
 
-        // clear keys
-        pf->key=0;
+    // clear keys
+    pf->key = 0;
 
-        // check if we did hit ground
-        if(block_checkhit_y(pf,1))
-        {
-            // check if we are in visible area
-            if(pf->by<2)
-            {
-                // set game over
-                ingame_gameover(pf);
-            }
-            else
-            {
-
-                // put block on playfield
-                block_set(pf,pf->bc);
-
-                // remove complete lines
-                if((lines=collapse_pf(pf))!=0)
-                {
-                    // each line gives 10 points, and each block 1 point
-                    update_lines(pf,lines);
-
-                    // check if stage completed
-                    if(pf->lines>=LINES_PER_STAGE)
-                    {
-                            update_stage(pf,pf->stage+1);
-                    }
-                    // update complete playfield
-                    update_pf_all(pf);
-                    flashit(7);
-                }
-                // no lines removed
-                else
-                {
-                        update_pf_block(pf);
-                        // each block 1 point
-                        update_score(pf,1);
-                }
-
-                // this block=next block
-                block_next(pf);
-                // next block=random
-                block_randomize(pf);
-
-                block_printnext(pf);
-            }
-        }
-        //  we didnt hit ground
-        else
-        {
+    // check if we did hit ground
+    if(block_checkhit_y(pf, 1)) {
+        // check if we are in visible area
+        if(pf->by < 2) {
+            // set game over
+            ingame_gameover(pf);
+        } else {
 
             // put block on playfield
-            block_set(pf,pf->bc);
+            block_set(pf, pf->bc);
 
-            // update part of playfield with block
-            update_pf_block(pf);
+            // remove complete lines
+            if((lines = collapse_pf(pf)) != 0) {
+                // each line gives 10 points, and each block 1 point
+                update_lines(pf, lines);
 
+                // check if stage completed
+                if(pf->lines >= LINES_PER_STAGE) {
+                    update_stage(pf, pf->stage + 1);
+                }
+                // update complete playfield
+                update_pf_all(pf);
+                flashit(7);
+            } else {
+                // no lines removed
+                update_pf_block(pf);
+                // each block 1 point
+                update_score(pf,1);
+            }
+
+            // this block=next block
+            block_next(pf);
+            // next block=random
+            block_randomize(pf);
+
+            block_printnext(pf);
         }
-         return(pf->gameover);
+    } else {
+        //  we didnt hit ground
+
+        // put block on playfield
+        block_set(pf, pf->bc);
+
+        // update part of playfield with block
+        update_pf_block(pf);
+    }
+    return(pf->gameover);
 }
 
 void ingame(void)
 {
-unsigned char playing=0;
-unsigned char plr=0;
+unsigned char playing = 0;
+unsigned char plr = 0;
 unsigned char i;
 
     // enable keyboard repeat mode with smallest delay and fastest repeatrate
     kbrepeat(KBREPEAT_ALL);
-//    kbrepeatrate(KB_REPEATRATE_0);
-//    kbrepeatdelay(KB_REPEATDELAY_0);
 
     // ingame init
     clrscr();
-    for(i=0;i<MAX_PLR;++i)
-    {
+    for(i = 0; i < MAX_PLR; ++i) {
         // position for the playfields on screen
         // each playfield is PF_X*PF_Y characters large on screen
-        //pf[i].px=((SCREENX-(MAX_PLR*(PF_X+1)))/2)+(i*(PF_X+1)) ;
-        GET1DIM(pf,i).px=((SCREENX-(MAX_PLR*(PF_X+1)))/2)+(i*(PF_X+1)) ;
+        GET1DIM(pf, i).px = ((SCREENX - (MAX_PLR * (PF_X + 1))) / 2) + (i * (PF_X + 1));
         init_pf(i);
     }
 
-//while(1){}
+    while(!playing) {
+        poll_controller();
+        plr = 0;
+        for(i = 0; i < MAX_PLR; ++i) {
+            plr += ingame_doplr(&GET1DIM(pf, i));
+        }
+        if(plr != MAX_PLR) {
+            playing = 1;
+        }
 
-    while(!playing)
-    {
-             poll_controller();
-            plr=0;
-             for(i=0;i<MAX_PLR;++i)
-             {
-                 //plr+=ingame_doplr(&pf[i]);
-                 plr+=ingame_doplr(&GET1DIM(pf,i));
-//pf[(int)i].nn=i;block_printnext(&pf[(int)i]);
-             }
-             if(plr!=MAX_PLR) playing=1;
+        ticks_do();
+        waitvsync();
+        flasher();
 
-            ticks_do();
-            waitvsync();
-            flasher();
-
-            conio_update();
-
+        conio_update();
     }
 
-    while(playing)
-    {
-             poll_controller();
-            plr=0;
-             for(i=0;i<MAX_PLR;++i)
-             {
-//                 plr+=ingame_doplr(&pf[i]);
-                 plr+=ingame_doplr(&GET1DIM(pf,i));
-             }
-             if(plr==MAX_PLR) playing=0;
+    while(playing) {
+        poll_controller();
+        plr = 0;
+        for(i = 0; i < MAX_PLR; ++i) {
+            plr += ingame_doplr(&GET1DIM(pf, i));
+        }
+        if(plr == MAX_PLR) {
+            playing = 0;
+        }
 
-            ticks_do();
-            waitvsync();
-            flasher();
+        ticks_do();
+        waitvsync();
+        flasher();
 
-            conio_update();
-
+        conio_update();
     }
 
     kbrepeat(KBREPEAT_ALL);
@@ -916,51 +789,41 @@ void init_pf(unsigned char n)
 {
 PLAYFIELD *p;
 
-    //p=&pf[n];
-    p=&GET1DIM(pf,n);
+    p = &GET1DIM(pf, n);
 
     ingame_init(p);
 
-//return;
-
     textcolor(COLOR_WHITE);
-    gotoxy(p->px,PF_Y);chline(PF_X);
+    gotoxy(p->px, PF_Y);
+    chline(PF_X);
 
-    #ifdef CONIOSCROLLS
-    if((p->px+PF_X)==(SCREENX-1))
-    {
-    gotoxy(p->px+PF_X,0);cvline(SCREENY-1);
+#ifdef CONIOSCROLLS
+    if((p->px + PF_X) == (SCREENX - 1)) {
+        gotoxy(p->px + PF_X, 0); cvline(SCREENY - 1);
+    } else {
+#endif
+        gotoxy(p->px + PF_X, 0); cvline(SCREENY);
+#ifdef CONIOSCROLLS
     }
-    else
-    {
-    #endif
-    gotoxy(p->px+PF_X,0);cvline(SCREENY);
-    #ifdef CONIOSCROLLS
-    }
-    #endif
+#endif
 
-    if((n+1)==MAX_PLR)
-    {
-        cputcxy(p->px+PF_X,PF_Y,CH_RTEE);
-    }
-    else
-    {
-        cputcxy(p->px+PF_X,PF_Y,CH_CROSS);
+    if((n + 1) == MAX_PLR) {
+        cputcxy(p->px + PF_X, PF_Y, CH_RTEE);
+    } else {
+        cputcxy(p->px + PF_X, PF_Y, CH_CROSS);
     }
 
     // draw line at left side of first playfield
     // if odd screensize allows this
-    if((n==0)&&(p->px>0))
-    {
-        cvlinexy(p->px-1,0,SCREENY);
-        cputcxy(p->px-1,PF_Y,CH_LTEE);
+    if((n == 0) && (p->px > 0)) {
+        cvlinexy(p->px - 1, 0, SCREENY);
+        cputcxy(p->px - 1, PF_Y, CH_LTEE);
     }
 
-    cputsxy(p->px,PF_Y+1+2,"next");
-      cputsxy(p->px+4,PF_Y+2,"lvl");
+    cputsxy(p->px, PF_Y + 1 + 2, "next");
+    cputsxy(p->px + 4, PF_Y + 2, "lvl");
 
     ingame_gameover(p);
-
 }
 
 /***********************************************************************************
@@ -973,7 +836,7 @@ int main(int argc, char *argv[])
 int main(void)
 #endif
 {
-unsigned char finished=0;
+unsigned char finished = 0;
 
 #if defined (__C128__)
 unsigned char oldvideomode;
@@ -1007,14 +870,14 @@ unsigned char oldvideomode;
 
     // select driver + init joystick api
     init_joy();
-    
+
 #if !defined(NOHISCORES)
     inithiscore();
 #endif
 
     // reset timers
     ticks_reset();
-    
+
 #if defined(NOTITLESCREEN)
     // simpler main loop when there is no title screen
     while (1) {

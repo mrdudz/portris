@@ -282,11 +282,11 @@ unsigned char c;
                     }
                     else
                     {
-                            #ifdef NOREVERS
+#ifdef NOREVERS
                             cclear(SCREENX);
-                            #else
+#else
                             cputs_c(menustrings[i]);
-                            #endif
+#endif
                     }
                     textcolor(COLOR_WHITE);
 
