@@ -449,7 +449,7 @@ register unsigned char *blocks;
 
         px = pf->px;
 
-        for(y = 0; (y < size) & (py < PF_Y); ++y) { // FIXME: the & smells like a bug/typo
+        for(y = 0; (y < size) && (py < PF_Y); ++y) {
             gotoxy(px,py);
 
             for(x = 0; x < PF_X; ++x) {
