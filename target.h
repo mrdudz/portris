@@ -194,6 +194,15 @@ hiscore screen
 #define NOHISCORES
 #define NOTITLESCREEN
 
+#elif defined(__C65__) || defined(__MEGA65__)
+#  define SCREENX     80
+#  define SCREENY     25
+
+#  define COLOR_VIOLET  COLOR_BLUE
+#  define NOHISCORES
+#  define NOWAITVBLANK      // FIXME: missing in cc65 lib
+#  define NOKBREPEAT        // FIXME: missing in cc65 lib
+
 /* other cc65 targets */
 #elif defined(__APPLE2ENH__)
 

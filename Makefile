@@ -80,7 +80,7 @@ SOURCEFILES=\
 
 ###############################################################################
 
-.PHONY: cbmloader c64 c128 c128vdc plus4 c16 vic20 cbm510 cbm610 pet atari apple2 apple2enh geos geosdic cbmdisk
+.PHONY: cbmloader c64 c128 c128vdc plus4 c16 vic20 cbm510 cbm610 pet c65 mega65 atari apple2 apple2enh geos geosdic cbmdisk
 
 cbmloader: loader.bas
 	@echo "cbm loader..."
@@ -165,6 +165,14 @@ cbm510: $(SOURCEFILES)
 cbm610: $(SOURCEFILES)
 	@echo "cbm610 ..."
 	$(CL65) $(CC65FLAGS) -o portris_cbm610.prg -t cbm610 main.c
+
+c65: $(SOURCEFILES)
+	@echo "c65..."
+	$(CL65) $(CC65FLAGS) -t c65 -o portris_c65.prg main.c
+
+mega65: $(SOURCEFILES)
+	@echo "mega65..."
+	$(CL65) $(CC65FLAGS) -t mega65 -o portris_mega65.prg main.c
 
 cbmdisk: $(CBMTARGETS) cbmloader
 	@echo "cbm disc ..."
@@ -270,10 +278,19 @@ pcengine: $(SOURCEFILES)
 
 pce: pcengine
 	
+# Usually, a cc65-built program just will sit quietly in memory, after it is CLOADed.
+# It waits for you to start it (by typing BASIC's RUN command). But, if you want to
+# create a program that will start running immediately after it is loaded, then you
+# can use the linker command-line option -D __AUTORUN__=$C7.
 atmos: $(SOURCEFILES)
 	@echo "atmos ..."
 	$(CL65) $(CL65FLAGS) -o portris_atmos.tap -t atmos main.c
 #	-oric.header atmos.prg portris_atmos.tap --quiet-autostart
+
+osic1p: $(SOURCEFILES)
+	@echo "osic1p ..."
+	$(CL65) $(CL65FLAGS) -o portris_osic1p.bin -t osic1p main.c
+	-srec_cat portris_osic1p.bin -bin -of 0x200 -o portris_osic1p.ser -os -esa=0x200
 
 # FIXME: file too large
 gamate: $(SOURCEFILES)
@@ -316,6 +333,7 @@ clean:
 	$(DEL) portris*.atr
 	$(DEL) portris*.d64
 	$(DEL) portris*.dsk
+	$(DEL) portris*.ser
 	$(DEL) *.o
 	$(DEL) *.lst
 	$(DEL) *.map

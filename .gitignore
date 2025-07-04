@@ -21,6 +21,8 @@ portris_c16exp.bin
 portris_c16exp.prg
 portris_c64.bin
 portris_c64.prg
+portris_c65.bin
+portris_c65.prg
 portris_c64_80x25.bin
 portris_c64_80x25.prg
 portris_c64_80x25m.bin
@@ -28,6 +30,8 @@ portris_c64_80x25m.prg
 portris_cbm510.prg
 portris_cbm610.prg
 portris_geos.cvt
+portris_mega65.bin
+portris_mega65.prg
 portris_nes.nes
 portris_pcengine.bin
 portris_pcengine.pce
